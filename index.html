@@ -43,6 +43,8 @@ h3{font:600 1.5rem/1.15 var(--cond);margin:0 0 6px}
 .row ul{margin:0;padding-left:18px;color:var(--muted)}.row li{margin-bottom:5px}
 dl.block a,.meta a{color:var(--steel)}
 .logo{display:block;margin-top:16px;width:64px;height:64px;background:var(--steel);-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
+.sim{display:inline-block;margin:0 0 4px;padding:10px 18px;border:1px solid var(--ink);background:var(--surface);color:var(--ink);font-weight:600;text-decoration:none}
+.sim:hover{background:var(--tint);color:var(--red)}
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:20px;border:1px solid var(--ink);background:var(--surface)}
 .steps div{padding:18px;border-right:1px solid var(--line)}
 .steps div:last-child{border-right:0}
@@ -99,7 +101,7 @@ footer{padding:28px 0 40px;border-top:1px solid var(--line);color:var(--muted);f
       Full overview
     </a>
   </p>
-  
+
   <div class="group">Continuous improvement projects</div>
   <div class="row"><h3>Cell Belt Guard Access Panel</h3><p>Integrated a piano-hinged access cutout into the cell belt guard for improved operator access and cleaning.</p></div>
   <div class="row"><h3>Reject Chute Deflector Plate</h3><p>Designed and fabricated a deflector plate to control rejected cartridge discharge into the collection bin.</p></div>
@@ -112,11 +114,12 @@ footer{padding:28px 0 40px;border-top:1px solid var(--line);color:var(--muted);f
 </section>
 
 <section id="kardex">
-  <h2>The <a href="kardex-simulation" target="_blank">Kardex</a> VLM</h2>
+  <h2>The <a href="kardex-simulation.html" target="_blank" rel="noopener">Kardex</a> VLM</h2>
   <p class="sub">
     Spearheaded the end-to-end commissioning of an Automated Storage and Retrieval System (ASRS), scaling from initial hardware onboarding to full operational deployment and freeing 70% of floor space.
   </p>
-  <div class="steps">    
+  <a class="sim" href="kardex-simulation.html" target="_blank" rel="noopener">Open the Kardex simulation &rarr;</a>
+  <div class="steps">
     <div><small>Step 1</small><h4>Learning how to use</h4><ul><li>OEM</li><li>Training videos</li><li>Manuals</li></ul></div>
     <div><small>Step 2</small><h4>Configuring and SOP/GLP</h4><ul><li>General operational manual</li><li>Software manual</li><li>General lockout procedure</li></ul></div>
     <div><small>Step 3</small><h4>Training</h4><ul><li>Engineers</li><li>Electricians</li><li>Mechanics</li><li>Automation</li><li>Facilities Technicians</li></ul></div>
