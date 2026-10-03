@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Smart Adaptive Knee Brace Simulator</title>
+<style>
+:root{--bg:#eef2f6;--panel:#fff;--text:#22313f;--muted:#64778a;--line:#d6dee6;--accent:#0f8f8a;--warm:#e0762a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141b22;--panel:#1e2730;--text:#e4ebf1;--muted:#92a3b3;--line:#36434f;--accent:#37c4bc;--warm:#f59a4e}}
+:root[data-theme="dark"]{--bg:#141b22;--panel:#1e2730;--text:#e4ebf1;--muted:#92a3b3;--line:#36434f;--accent:#37c4bc;--warm:#f59a4e}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font:13px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+#app{display:flex;height:100%}#view{flex:1;position:relative;min-width:0;overflow:hidden}
+canvas#c{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+#tip{position:absolute;pointer-events:none;display:none;max-width:250px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px;box-shadow:0 4px 16px #0003;font-size:12px}
+#tip b{display:block;font-size:13px;margin-bottom:2px}#tip i{color:var(--accent);font-style:normal;display:block;margin-top:3px}
+#hint{position:absolute;left:12px;bottom:12px;font-size:12px;color:var(--muted);background:var(--panel);padding:5px 9px;border-radius:6px;border:1px solid var(--line);pointer-events:none}
+#seg{position:absolute;top:12px;left:12px;display:flex;gap:0;background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+#seg button{border:0;border-radius:0;padding:8px 14px;background:transparent}#seg button.on{background:var(--accent);color:#fff;font-weight:600}
+aside{width:310px;background:var(--panel);border-left:1px solid var(--line);padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+h1{font-size:17px;margin:0}h2{font-size:12px;margin:0 0 6px;color:var(--muted);font-weight:600}
+label{display:flex;justify-content:space-between;align-items:center;gap:8px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select,button{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 10px}button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.lock{width:100%;font-weight:600;margin-top:8px}button.lock.on{background:#c0392b;color:#fff;border-color:#c0392b}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.tile{background:var(--bg);border-radius:8px;padding:6px 9px}
+.tile span{display:block;color:var(--muted);font-size:11px}.tile b{font-size:16px}.wide{grid-column:1/3}
+.bar{height:7px;background:var(--line);border-radius:4px;overflow:hidden;margin:3px 0 7px}.bar i{display:block;height:100%;width:0;background:var(--accent)}
+canvas#ch{width:100%;height:80px;background:var(--bg);border-radius:8px}small{color:var(--muted)}
+#game{display:none;background:var(--bg);border-radius:8px;padding:9px}#game b{font-size:15px}
+@media(max-width:760px){#app{flex-direction:column}aside{width:100%;height:50%;border-left:0;border-top:1px solid var(--line)}}
+</style></head><body><div id="app">
+<div id="view"><canvas id="c"></canvas>
+<div id="seg"><button id="vx" class="on">X-ray anatomy</button><button id="vb">With brace</button></div>
+<div id="tip"></div><div id="hint">Drag to orbit · right-drag to pan · scroll to zoom · hover a part for its name</div></div>
+<aside>
+<div><h1>Adaptive knee brace</h1><small>Sensing, compression and rehab tracking</small></div>
+<section><h2>Control the knee</h2>
+<label>Flexion angle <b id="av">0°</b></label><input id="ang" type="range" min="0" max="140" value="0">
+<label style="margin-top:8px">Movement <select id="mode"><option value="manual">Manual (slider)</option><option value="walk">Walking</option><option value="ext">Seated extension</option><option value="sq">Squat</option></select></label>
+<label style="margin-top:8px">Tempo <b id="tv">1×</b></label><input id="tempo" type="range" min=".5" max="2" step=".25" value="1">
+<small>Tempo speeds up Walking, Extension and Squat. Moving it from Manual starts Walking.</small><button class="lock" id="lock">Lock hinge (stationary support)</button>
+<label style="margin-top:8px"><span>Show quadriceps muscle (X-ray)</span><input type="checkbox" id="mu" checked></label>
+<label style="margin-top:8px"><span>Show anatomy inside brace</span><input type="checkbox" id="ghost"></label></section>
+<section><h2>Live metrics</h2><div class="grid">
+<div class="tile"><span>Knee angle</span><b id="m1">0°</b></div><div class="tile"><span>Angular velocity</span><b id="m2">0°/s</b></div>
+<div class="tile"><span>Range of motion</span><b id="m3">0–0°</b></div><div class="tile"><span>Reps / steps</span><b id="m4">0</b></div>
+<div class="tile"><span>Avg peak flexion</span><b id="m5">–</b></div><div class="tile"><span>Peak speed</span><b id="m6">0°/s</b></div>
+<div class="tile"><span>Compression</span><b id="m7">0 mmHg</b></div><div class="tile"><span>Activity</span><b id="m8" style="font-size:13px">Standing</b></div></div>
+<canvas id="ch" width="560" height="160" style="margin-top:8px"></canvas></section>
+<section><h2>Muscle activation (EMG estimate)</h2>
+<label>Quadriceps <b id="eq">0%</b></label><div class="bar"><i id="bq"></i></div>
+<label>Hamstrings <b id="eh">0%</b></label><div class="bar"><i id="bh"></i></div></section>
+<section><label><span>Rehab game</span><input type="checkbox" id="gm"></label>
+<div id="game" style="margin-top:8px"><div>Reach <b id="gt">90°</b> then straighten the knee</div><div class="bar"><i id="gb"></i></div>
+<div class="grid"><div class="tile"><span>Score</span><b id="gs">0</b></div><div class="tile"><span>Streak · Level</span><b id="gl">0 · 1</b></div></div></div></section>
+<button id="rs">Reset session</button>
+<small>Paired phone view: BLE link simulated. Compression auto-adjusts to activity; the lock holds the hinge and raises support pressure.</small>
+</aside></div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const $=id=>document.getElementById(id),V=THREE.Vector3,UP=new V(0,1,0),dark=matchMedia('(prefers-color-scheme: dark)').matches,view=$('view');
+const renderer=new THREE.WebGLRenderer({canvas:$('c'),antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+const BGL=dark?0x141b22:0xeef2f6,BGX=0x08141e,scene=new THREE.Scene();scene.background=new THREE.Color(BGX);
+const camera=new THREE.PerspectiveCamera(38,1,.1,100);camera.position.set(7.5,1.2,9.5);
+const controls=new THREE.OrbitControls(camera,$('c'));Object.assign(controls,{enableDamping:true,dampingFactor:.08,minDistance:1.8,maxDistance:30});
+scene.add(new THREE.HemisphereLight(0xffffff,0x7a8795,.95));
+const d1=new THREE.DirectionalLight(0xffffff,.8);d1.position.set(5,8,9);scene.add(d1);
+const d2=new THREE.DirectionalLight(0x9fc4ff,.35);d2.position.set(-6,-2,-6);scene.add(d2);
+
+const G={a:[],b:[],s:[]},bm=[],links=[];
+const mat=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.5,metalness:.05},o));
+const B=()=>{const m=mat(0xe9e2cf,{roughness:.55,transparent:true});bm.push(m);return m};
+function mk(geo,m,par,pos,name,desc,grp){const me=new THREE.Mesh(geo,m);if(pos)me.position.set(...pos);
+ me.userData={name,desc,c:m.color.getHex()};par.add(me);G[grp].push(me);return me}
+const F=(x,y,z)=>{const v=new V(x,y,z);return()=>v};
+function link(a,b,r,m,name,desc,grp){const me=mk(new THREE.CylinderGeometry(r,r,1,10),m,scene,null,name,desc,grp),L={me,a,b,rest:0,len:0};me.userData.L=L;links.push(L);return L}
+function updLinks(){links.forEach(L=>{const a=L.a(),d=L.b().sub(a),len=d.length();L.me.position.copy(a).addScaledVector(d,.5);L.me.scale.y=len;L.me.quaternion.setFromUnitVectors(UP,d.normalize());L.len=len;if(!L.rest)L.rest=len})}
+
+// ---- anatomy ----
+const tib=new THREE.Group(),patP=new THREE.Group();scene.add(tib,patP);
+const T=(x,y,z)=>{const v=new V(x,y,z);return()=>tib.localToWorld(v.clone())};
+const cartM=()=>mat(0xa9c8da,{roughness:.22,side:THREE.DoubleSide}),cart2=mat(0x7fa3b5,{roughness:.5}),LV=a=>a.map(([r,y])=>new THREE.Vector2(r,y));
+const CD='Smooth, slippery layer covering the ends of the bones; reduces friction.';
+const fem=mk(new THREE.LatheGeometry(LV([[0,.35],[.5,.4],[.82,.6],[.76,1],[.5,1.6],[.38,2.4],[.36,3.5],[.4,4.6],[0,4.6]]),40),B(),scene,null,'Femur','Thigh bone. The longest and strongest bone in the body.','a');fem.scale.z=.85;
+[[.62,'medial','inner',1],[-.62,'lateral','outer',-1]].forEach(([x,n,s,k])=>{
+ const N=n[0].toUpperCase()+n.slice(1);
+ mk(new THREE.SphereGeometry(.62,32,24),B(),scene,[x,0,-.1],`Femur: ${n} condyle`,`Rounded end of the femur on the ${s} side that rolls on the tibia.`,'a').scale.set(.95,1,1.2);
+ mk(new THREE.SphereGeometry(.635,32,20,0,Math.PI*2,Math.PI*.3,Math.PI*.7),cartM(),scene,[x,0,-.1],'Articular cartilage (femoral)',CD,'a').scale.set(.95,1,1.2);
+ mk(new THREE.SphereGeometry(.2,14,10),B(),scene,[k*1.22,.15,-.1],`${N} epicondyle`,'Bony prominence where the collateral ligament attaches.','a')});
+mk(new THREE.SphereGeometry(.5,24,16),cartM(),scene,[0,.4,.38],'Patellofemoral groove','Cartilage-lined groove in which the kneecap glides.','a').scale.set(1.15,1,.55);
+mk(new THREE.LatheGeometry(LV([[0,-.64],[.9,-.66],[.98,-.8],[.8,-1.15],[.55,-1.8],[.42,-2.6],[.34,-3.6],[.3,-4.7]]),40),B(),tib,null,'Tibia (shin bone)','Main weight-bearing bone of the lower leg. Its flat top is the tibial plateau.','a').scale.x=1.2;
+mk(new THREE.SphereGeometry(.2,16,12),B(),tib,[0,-1.3,.62],'Tibial tuberosity','Bony bump where the patellar tendon attaches.','a');
+[-.1,.1].forEach(x=>mk(new THREE.ConeGeometry(.08,.16,10),B(),tib,[x,-.56,0],'Intercondylar eminence','Tibial spines between the cruciate ligament attachments.','a'));
+mk(new THREE.CylinderGeometry(.17,.13,3.7,14),B(),tib,[-.95,-2.9,-.32],'Fibula','Slim outer bone of the lower leg; anchors the LCL.','a');
+mk(new THREE.SphereGeometry(.26,16,12),B(),tib,[-.95,-.95,-.32],'Fibular head','Top of the fibula where the LCL attaches.','a');
+mk(new THREE.BoxGeometry(.4,2.2,.03),mat(0xe6ebf0,{transparent:true,opacity:.8,roughness:.7}),tib,[-.64,-2.9,-.18],'Interosseous membrane','Fibrous sheet binding the tibia and fibula together.','a');
+const pat=mk(new THREE.SphereGeometry(.32,24,16),B(),patP,[0,.45,.85],'Patella (kneecap)','Sesamoid bone that increases the leverage of the quadriceps.','a');pat.scale.set(1.05,1.2,.5);
+[[.55,'Medial','C-shaped cartilage cushion on the inner side; absorbs shock.',1.5,-.75],[-.55,'Lateral','Nearly circular cartilage cushion on the outer side.',1.75,.125]].forEach(([x,n,d,arc,rz])=>{
+ mk(new THREE.CylinderGeometry(.46,.46,.04,28),cartM(),tib,[x,-.62,0],'Articular cartilage (tibial)',CD,'a').scale.z=1.1;
+ const m=mk(new THREE.TorusGeometry(.4,.1,10,32,arc*Math.PI),cart2,tib,[x,-.6,0],n+' meniscus',d,'a');m.rotation.set(-Math.PI/2,0,rz*Math.PI);m.scale.z=.55});
+const P=(x,y,z)=>()=>pat.localToWorld(new V(x,y,z));
+const LG=(c,r=.07)=>mat(c,{roughness:.6});
+link(F(-.1,.25,-.3),T(.08,-.62,.22),.085,LG(0xf1d6b0),'ACL: anterior cruciate ligament','Stops the tibia sliding forward and controls rotation.','a');
+link(F(.1,.25,.1),T(-.05,-.62,-.55),.095,LG(0xe2b79d),'PCL: posterior cruciate ligament','Stops the tibia sliding backward. Tightens as the knee bends.','a');
+link(F(1.25,.15,-.1),T(.58,-2.1,-.05),.16,LG(0xe8ecef),'MCL: medial collateral ligament','Broad band resisting sideways force that pushes the knee inward (valgus).','a').me.scale.x=.3;
+link(F(-1.25,.1,-.1),T(-.98,-.9,-.32),.07,LG(0xdbe3ea),'LCL: lateral collateral ligament','Cord resisting sideways force that pushes the knee outward (varus).','a');
+link(T(-.78,-.8,-.05),T(-.5,-1.05,.3),.05,LG(0xdbe3ea),'Ligament of fibula head','Anchors the fibular head to the tibia.','a');
+link(T(-.5,-.58,.45),T(.5,-.58,.45),.05,LG(0xf5f2ea),'Transverse ligament','Joins the front horns of the two menisci.','a');
+link(P(0,-.3,0),T(0,-1.3,.62),.1,LG(0xf5f2ea),'Patellar tendon','Connects the kneecap to the tibia; transmits quadriceps force.','a');
+link(F(0,1.6,.45),P(0,.3,0),.11,LG(0xf5f2ea),'Quadriceps tendon','Connects the thigh muscles to the top of the kneecap.','a');
+const muM=mat(0xc95a4b,{roughness:.75,transparent:true,opacity:.78});
+[['rectus femoris',[0,3,.52],[.3,1.55,.24],0],['vastus lateralis',[-.5,2.7,.25],[.3,1.55,.3],.12],['vastus medialis',[.5,2.35,.28],[.3,1.1,.3],-.12]].forEach(([n,p,sc,rz])=>{
+ const m=mk(new THREE.SphereGeometry(1,20,14),muM,scene,p,'Quadriceps: '+n,'Thigh muscle that extends (straightens) the knee.','a');m.scale.set(...sc);m.rotation.z=rz;m.userData.mu=true;m.userData.dyn=()=>`Activation ${(S.q*100).toFixed(0)}%`});
+
+// ---- soft tissue ----
+const skinM=mat(0xe4bda4,{roughness:.8,transparent:true});
+mk(new THREE.CylinderGeometry(.68,.62,4.6,36),skinM,scene,[0,2.3,0],null,'','s');
+mk(new THREE.SphereGeometry(1.15,32,24),skinM,scene,null,null,'','s').scale.set(1.25,1.05,1);
+mk(new THREE.CylinderGeometry(.6,.38,4.4,32),skinM,tib,[0,-2.4,0],null,'','s');
+
+// ---- brace ----
+const neo=mat(0x2d3745,{roughness:.9,side:THREE.DoubleSide}),strapM=mat(0x3b82f6,{roughness:.4,emissive:0x3b82f6,emissiveIntensity:.5}),steel=mat(0xb8c2cc,{metalness:.7,roughness:.35}),shellM=mat(0xf1f4f8,{roughness:.3});
+const thG=new THREE.Group(),cfG=new THREE.Group();scene.add(thG);tib.add(cfG);
+const strapDesc='Inflatable pneumatic bladder. A micro-pump raises or relaxes compression with activity.';
+const cuff=(g,t,b,h,y,n)=>mk(new THREE.CylinderGeometry(t,b,h,40,1,true),neo,g,[0,y,0],n,'Soft neoprene cuff that holds the brace and sensors.','b');
+cuff(thG,.76,.72,1.5,1.7,'Thigh cuff');cuff(cfG,.64,.58,1.5,-1.9,'Calf cuff');
+[[thG,1.3,.74],[thG,2.1,.755],[cfG,-1.55,.625],[cfG,-2.25,.6]].forEach(([g,y,r])=>{
+ const s=mk(new THREE.TorusGeometry(r,.045,10,48).rotateX(Math.PI/2),strapM,g,[0,y,0],'Pneumatic compression strap',strapDesc,'b');s.userData.dyn=()=>`Pressure ${S.comp.toFixed(0)} mmHg`});
+const lockM=mat(0x22c55e,{emissive:0x22c55e,emissiveIntensity:.8});
+[1,-1].forEach(s=>{
+ const h=mk(new THREE.CylinderGeometry(.28,.28,.14,28).rotateZ(Math.PI/2),shellM,scene,[s*1.55,0,0],'Hinge with angle encoder','Mechanical hinge with a Hall-effect encoder that measures knee angle.','b');h.userData.dyn=()=>`Reading ${S.ang.toFixed(0)}°`;
+ mk(new THREE.TorusGeometry(.3,.03,8,28).rotateY(Math.PI/2),lockM,scene,[s*1.64,0,0],'Hinge lock ring','Green = free motion. Red = locked for stationary support.','b');
+ mk(new THREE.BoxGeometry(.05,.3,.07),mat(0x222a33),tib,[s*1.67,-.14,0],'Angle pointer','Rotates with the shin to show the flexion angle.','b');
+ link(()=>new V(s*1.55,.1,0),()=>new V(s*.76,1.4,0),.07,steel,'Hinge arm','Rigid upright linking the hinge to the thigh cuff.','b');
+ link(()=>new V(s*1.55,-.1,0),T(s*.66,-1.5,0),.07,steel,'Hinge arm','Rigid upright linking the hinge to the calf cuff.','b')});
+const pin=mk(new THREE.CylinderGeometry(.06,.06,.7).rotateZ(Math.PI/2),mat(0xc0392b,{emissive:0xc0392b,emissiveIntensity:.7}),scene,[-1.6,0,0],'Lock pin','Manual lock pin holds the hinge fixed.','b');
+const ctrl=mk(new THREE.BoxGeometry(.3,.55,.38),shellM,scene,[-.92,2.3,0],'Controller: ESP32 + micro-pump','Runs the control loop, drives the pump and streams data to the phone over BLE.','b');
+ctrl.userData.dyn=()=>'BLE: connected to phone';
+const bleM=new THREE.MeshBasicMaterial({color:0x38bdf8});const ble=mk(new THREE.SphereGeometry(.05,10,8),bleM,scene,[-1.08,2.4,0],null,'','b');
+const imu=(g,y,z,n)=>{const i=mk(new THREE.BoxGeometry(.34,.12,.26),shellM,g,[0,y,z],n,'Inertial sensor (accelerometer + gyroscope) for motion and activity detection.','b');i.userData.dyn=()=>`${S.w.toFixed(0)}°/s`;
+ mk(new THREE.SphereGeometry(.035,8,6),new THREE.MeshBasicMaterial({color:0x4ade80}),g,[.1,y+.07,z+.02],null,'','b')};
+imu(scene,1.7,.78,'IMU: thigh');imu(cfG,-1.9,.66,'IMU: shank');
+const emgQ=mat(0x2a3440,{emissive:0x22d3ee,emissiveIntensity:0}),emgH=mat(0x2a3440,{emissive:0x22d3ee,emissiveIntensity:0});
+const pad=(m,z,n,k)=>{const p=mk(new THREE.CylinderGeometry(.17,.17,.04,22).rotateX(Math.PI/2),m,scene,[0,2.8,z],n,'Surface electrode that estimates muscle activation (sEMG).','b');p.userData.dyn=()=>`Activation ${(S[k]*100).toFixed(0)}%`};
+pad(emgQ,.68,'EMG pad: quadriceps','q');pad(emgH,-.68,'EMG pad: hamstrings','h');
+const ring=mk(new THREE.TorusGeometry(.42,.09,10,32),neo,patP,[0,.45,1.18],'Patellar support ring','Padded ring that stabilises the kneecap.','b');
+
+// ---- simulation ----
+const S={ang:0,w:0,aw:0,min:180,max:0,reps:0,up:false,pk:0,peaks:[],pvel:0,comp:12,q:.1,h:.1,score:0,streak:0,target:90};
+let mt=0,muOn=true,ph=0,locked=false,gameOn=false,view_='x',ghost=false,hist=[],hT=0,prev=0;
+const gb=(p,c,w)=>{let d=Math.abs(p-c);d=Math.min(d,1-d);return Math.exp(-d*d/(2*w*w))};
+const MOT={walk:[1.1,p=>5+13*gb(p,.15,.06)+56*gb(p,.72,.1)],ext:[5,p=>47.5+42.5*Math.cos(p*6.2832)],sq:[4,p=>57.5-57.5*Math.cos(p*6.2832)]};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function setView(){const x=view_==='x',a=x||ghost;
+ scene.background.setHex(x?BGX:BGL);G.a.forEach(o=>o.visible=a&&(!o.userData.mu||(x&&muOn)));G.b.forEach(o=>o.visible=!x);G.s.forEach(o=>o.visible=!x);
+ bm.forEach(m=>{m.emissive.setHex(x?0x16324a:0);m.opacity=x?1:.9});skinM.opacity=ghost?.16:.96;skinM.depthWrite=!ghost;
+ $('vx').classList.toggle('on',x);$('vb').classList.toggle('on',!x)}
+$('vx').onclick=()=>{view_='x';setView()};$('vb').onclick=()=>{view_='b';setView()};
+$('ghost').onchange=e=>{ghost=e.target.checked;setView()};
+$('lock').onclick=()=>{locked=!locked;$('lock').classList.toggle('on',locked);$('lock').textContent=locked?'Unlock hinge':'Lock hinge (stationary support)';$('ang').disabled=locked};
+$('mode').onchange=()=>{ph=0;mt=S.ang;$('ang').value=S.ang};
+$('ang').oninput=e=>{mt=+e.target.value;$('mode').value='manual';ph=0};
+$('mu').onchange=e=>{muOn=e.target.checked;setView()};
+$('tempo').oninput=e=>{$('tv').textContent=e.target.value+'×';if($('mode').value==='manual'){$('mode').value='walk';ph=0}};
+$('gm').onchange=e=>{gameOn=e.target.checked;$('game').style.display=gameOn?'block':'none'};
+$('rs').onclick=()=>{Object.assign(S,{min:180,max:0,reps:0,up:false,peaks:[],pvel:0,score:0,streak:0,target:90})};
+function rep(pk){S.reps++;S.peaks.push(pk);if(!gameOn)return;
+ if(pk>=S.target-5){S.streak++;S.score+=100*Math.min(S.streak,5)}else{S.streak=0;S.score+=20}
+ S.target=5*(12+Math.random()*10|0)}
+function activity(){const r=hist.slice(-40);
+ if(locked)return['Locked: rigid support',30];
+ if(S.aw<6)return S.ang<20?['Standing',16]:S.ang>=65?['Sitting',8]:['Holding flexed',12];
+ return S.aw>=40&&Math.max(...r)<75?['Walking',22+Math.min(6,S.aw*.05)]:['Controlled exercise',19]}
+const colA=new THREE.Color(0x3b82f6),colB=new THREE.Color(0xf97316),tc=new THREE.Color();
+let act='Standing';
+function update(dt){
+ const mode=$('mode').value;
+ if(!locked){const tp=+$('tempo').value;let tgt;
+  if(mode==='manual')tgt=mt;else{ph+=dt*tp;const[m,f]=MOT[mode];tgt=f((ph/m)%1);$('ang').value=S.ang}
+  S.ang+=(tgt-S.ang)*(1-Math.exp(-dt*(mode==='manual'?9:50)))}
+ S.w+=(((S.ang-prev)/dt)-S.w)*Math.min(1,dt*12);prev=S.ang;if(locked)S.w*=.8;
+ S.aw+=(Math.abs(S.w)-S.aw)*Math.min(1,dt*1.2);S.pvel=Math.max(S.pvel,Math.abs(S.w));
+ S.min=Math.min(S.min,S.ang);S.max=Math.max(S.max,S.ang);
+ if(!S.up&&S.ang>45){S.up=true;S.pk=S.ang}if(S.up){S.pk=Math.max(S.pk,S.ang);if(S.ang<20){S.up=false;rep(S.pk)}}
+ hT+=dt;if(hT>.05){hT=0;hist.push(S.ang);if(hist.length>200)hist.shift()}
+ const[a,tc_]=activity();act=a;S.comp+=(tc_-S.comp)*(1-Math.exp(-dt*3));
+ const qT=clamp(.1+.4*S.ang/110+.5*clamp(-S.w/100,0,1),0,1),hT_=clamp(.08+.55*clamp(S.w/100,0,1)+.15*(1-S.ang/140),0,1);
+ S.q+=(qT-S.q)*Math.min(1,dt*8);S.h+=(hT_-S.h)*Math.min(1,dt*8);
+ // pose
+ tib.rotation.x=S.ang*Math.PI/180;patP.rotation.x=S.ang*Math.PI/180*.5;
+ tib.updateMatrixWorld(true);patP.updateMatrixWorld(true);updLinks();
+ const k=clamp((S.comp-6)/26,0,1),sc=1-.05*k;thG.scale.set(sc,1,sc);cfG.scale.set(sc,1,sc);
+ tc.copy(colA).lerp(colB,k);strapM.color.copy(tc);strapM.emissive.copy(tc);strapM.emissiveIntensity=.35+.5*k;
+ lockM.color.setHex(locked?0xef4444:0x22c55e);lockM.emissive.setHex(locked?0xef4444:0x22c55e);pin.visible=locked&&view_==='b';
+ muM.emissive.setHex(0xff3b2f);muM.emissiveIntensity=S.q*.6;emgQ.emissiveIntensity=S.q*1.6;emgH.emissiveIntensity=S.h*1.6;bleM.color.setHex(Math.sin(performance.now()/250)>0?0x38bdf8:0x0c4a6e);
+}
+function chart(){const c=$('ch'),w=c.width,h=c.height,g=c.getContext('2d'),st=getComputedStyle(document.documentElement),y=a=>h-clamp(a,0,140)/140*h;g.clearRect(0,0,w,h);
+ g.strokeStyle=st.getPropertyValue('--line');g.lineWidth=1;[0,45,90,135].forEach(a=>{g.beginPath();g.moveTo(0,y(a));g.lineTo(w,y(a));g.stroke()});
+ if(gameOn){g.strokeStyle=st.getPropertyValue('--warm');g.setLineDash([8,6]);g.beginPath();g.moveTo(0,y(S.target));g.lineTo(w,y(S.target));g.stroke();g.setLineDash([])}
+ g.strokeStyle=st.getPropertyValue('--accent');g.lineWidth=3;g.beginPath();hist.forEach((a,i)=>{const x=i/199*w;i?g.lineTo(x,y(a)):g.moveTo(x,y(a))});g.stroke()}
+function ui(){const avg=S.peaks.length?S.peaks.reduce((a,b)=>a+b)/S.peaks.length:0;
+ $('av').textContent=$('m1').textContent=S.ang.toFixed(0)+'°';$('m2').textContent=S.w.toFixed(0)+'°/s';
+ $('m3').textContent=(S.min>S.max?0:S.min.toFixed(0))+'–'+S.max.toFixed(0)+'°';$('m4').textContent=S.reps;
+ $('m5').textContent=avg?avg.toFixed(0)+'°':'–';$('m6').textContent=S.pvel.toFixed(0)+'°/s';$('m7').textContent=S.comp.toFixed(0)+' mmHg';$('m8').textContent=act;
+ $('eq').textContent=(S.q*100).toFixed(0)+'%';$('eh').textContent=(S.h*100).toFixed(0)+'%';$('bq').style.width=S.q*100+'%';$('bh').style.width=S.h*100+'%';
+ if(gameOn){$('gt').textContent=S.target+'°';$('gb').style.width=clamp(S.ang/S.target*100,0,100)+'%';$('gs').textContent=S.score;$('gl').textContent=S.streak+' · '+(1+S.score/500|0)}
+ chart()}
+// hover
+const ray=new THREE.Raycaster(),mp=new THREE.Vector2(),tip=$('tip');let mx=0,my=0,moved=false,hov=null,dragging=false;
+$('c').addEventListener('pointermove',e=>{const r=$('c').getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;mp.set(mx/r.width*2-1,-(my/r.height)*2+1);moved=true;dragging=e.buttons>0});
+$('c').addEventListener('pointerleave',()=>{moved=false;unhover()});
+function unhover(){if(hov){hov.material.color.setHex(hov.userData.c);hov=null}tip.style.display='none'}
+function pick(){const list=[...(view_==='x'||ghost?G.a:[]),...(view_==='b'?G.b:[])].filter(o=>o.visible);
+ if(dragging){unhover();return}
+ ray.setFromCamera(mp,camera);const h=ray.intersectObjects(list,false)[0],o=h&&h.object;
+ if(o!==hov){unhover();if(o){hov=o;o.material.color.set(o.userData.c).lerp(new THREE.Color(0xffffff),.4)}}
+ if(o){const u=o.userData;let ex=u.L?`Length change: ${((u.L.len/u.L.rest-1)*100).toFixed(1)}% vs straight knee`:u.dyn?u.dyn():'';
+  tip.innerHTML=`<b>${u.name}</b>${u.desc}${ex?'<i>'+ex+'</i>':''}`;tip.style.display='block';
+  tip.style.left=Math.min(mx+16,view.clientWidth-260)+'px';tip.style.top=Math.max(8,Math.min(my+16,view.clientHeight-110))+'px'}else tip.style.display='none'}
+function resize(){const w=view.clientWidth,h=view.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+addEventListener('resize',resize);resize();setView();updLinks();
+let last=performance.now(),uT=0;
+(function loop(now){requestAnimationFrame(loop);const dt=clamp((now-last)/1000,.001,.1);last=now;update(dt);
+ if(moved){pick();moved=false}uT+=dt;if(uT>.1){uT=0;ui()}controls.update();renderer.render(scene,camera)})(last);
+</script></body></html>
