@@ -58,7 +58,7 @@ h3{font:600 1.5rem/1.15 var(--cond);margin:0 0 6px}
 dl.block a,.meta a{color:var(--steel)}
 .logo{display:block;margin-top:16px;width:64px;height:64px;background:var(--steel);-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat;transition:transform .3s ease;cursor:pointer}
 a.logo:hover,a.logo:focus-visible{transform:scale(1.2)}
-a.kneewrap{display:block;width:130px;height:240px;margin-top:16px;perspective:700px;transition:transform .3s ease;transform-origin:left center;cursor:pointer}
+a.kneewrap{display:block;width:140px;height:260px;margin-top:16px;perspective:700px;transition:transform .3s ease;transform-origin:left center;cursor:pointer}
 a.kneewrap:hover,a.kneewrap:focus-visible{transform:scale(1.12)}
 .kneewrap canvas{display:block;width:100%;height:100%}
 .kneewrap .logo.knee{margin:0;width:100%;height:100%;animation:kspin 26s linear infinite}
@@ -75,7 +75,7 @@ a.kneewrap:hover,a.kneewrap:focus-visible{transform:scale(1.12)}
 .steps h4{margin:0 0 4px;font:600 1.3rem var(--cond)}
 .steps small{display:block;color:var(--red);font-weight:600;margin-bottom:6px}
 .steps ul{margin:0;padding-left:18px;color:var(--muted)}
-.certs{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.certs{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:28px}
 .cert{display:block;color:inherit;text-decoration:none;border:1px solid var(--ink);background:var(--surface);padding:22px;border-top:6px solid var(--red);transition:transform .3s ease,box-shadow .3s ease}
 a.cert:hover,a.cert:focus-visible{transform:translateY(-4px) scale(1.04);box-shadow:0 14px 28px rgba(0,0,0,.28)}
 .cert .view{display:block;margin-top:12px;color:var(--red);font-weight:600}
@@ -90,7 +90,7 @@ footer{padding:28px 0 40px;border-top:1px solid var(--line);color:var(--muted);f
 </head>
 <body>
 <div class="wrap">
-<header class="top"><b>Sneh Patel</b><nav><a href="#experience">Experience</a><a href="#projects">Projects</a><a href="#certs">Certifications</a><div class="dd"><span class="dd-btn" tabindex="0">Simulations &#9662;</span><div class="dd-menu"><a href="kardex-simulation.html" target="_blank" rel="noopener">Kardex VLM</a><a href="rover-simulation.html" target="_blank" rel="noopener">Autonomous Space Rover</a><a href="knee-simulation.html" target="_blank" rel="noopener">Adaptive Knee Brace</a></div></div></nav></header>
+<header class="top"><b>Sneh Patel</b><nav><a href="#experience">Experience</a><a href="#builds">Projects</a><a href="#certs">Certifications</a><div class="dd"><span class="dd-btn" tabindex="0">Simulations &#9662;</span><div class="dd-menu"><a href="kardex-simulation.html" target="_blank" rel="noopener">Kardex VLM</a><a href="rover-simulation.html" target="_blank" rel="noopener">Autonomous Space Rover</a><a href="knee-simulation.html" target="_blank" rel="noopener">Adaptive Knee Brace</a></div></div></nav></header>
 
 <main>
 <div class="hero">
@@ -213,7 +213,7 @@ var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').mat
 function css(n,d){return getComputedStyle(root).getPropertyValue(n).trim()||d;}
 function mats(){
 return{body:new T.MeshLambertMaterial(),strap:new T.MeshLambertMaterial({side:T.DoubleSide}),wheel:new T.MeshLambertMaterial(),hi:new T.MeshLambertMaterial(),
-ghost:new T.MeshLambertMaterial({transparent:true,opacity:0.22}),pad:new T.MeshLambertMaterial({side:T.DoubleSide}),shell:new T.MeshLambertMaterial({map:weave()}),metal:new T.MeshLambertMaterial(),face:new T.MeshLambertMaterial(),dark:new T.MeshLambertMaterial(),edge:new T.LineBasicMaterial({transparent:true,opacity:0.55}),
+ghost:new T.MeshLambertMaterial({transparent:true,opacity:0.22}),pad:new T.MeshLambertMaterial({side:T.DoubleSide}),shell:new T.MeshPhongMaterial({map:weave(),shininess:50,specular:0x445566}),metal:new T.MeshPhongMaterial({shininess:80,specular:0x8899aa}),face:new T.MeshPhongMaterial({shininess:60,specular:0x667788}),dark:new T.MeshPhongMaterial({shininess:40,specular:0x334455}),glow:new T.MeshBasicMaterial({transparent:true,opacity:0.95}),scan:new T.MeshBasicMaterial({transparent:true,opacity:0.5}),edge:new T.LineBasicMaterial({transparent:true,opacity:0.55}),
 ring:new T.MeshBasicMaterial({transparent:true,opacity:0.4,side:T.DoubleSide}),disc:new T.MeshBasicMaterial({transparent:true,opacity:0.08,side:T.DoubleSide})};
 }
 function colors(M){
@@ -221,7 +221,7 @@ var st=new T.Color(css('--steel','#2b5472'));
 M.body.color.copy(st);M.strap.color.copy(st);M.wheel.color.copy(st).multiplyScalar(0.55);
 M.hi.color.copy(st).lerp(new T.Color('#ffffff'),0.4);M.ghost.color.copy(st).lerp(new T.Color('#ffffff'),0.3);
 M.edge.color.set(css('--bg','#f6f8fa'));M.ring.color.copy(st);M.disc.color.copy(st);
-var W=new T.Color('#ffffff');M.pad.color.copy(st).lerp(W,0.12);M.shell.color.copy(st).multiplyScalar(0.6);M.metal.color.copy(st).multiplyScalar(0.6);M.face.color.copy(st).lerp(W,0.45);M.dark.color.copy(st).multiplyScalar(0.35);
+var W=new T.Color('#ffffff');M.pad.color.copy(st).lerp(W,0.12);M.shell.color.copy(st).multiplyScalar(0.6);M.metal.color.copy(st).multiplyScalar(0.6);M.face.color.copy(st).lerp(W,0.45);M.dark.color.copy(st).multiplyScalar(0.35);M.glow.color.set(css('--red','#d3202e'));M.scan.color.copy(M.glow.color);
 }
 function part(g,M,geo,mat,x,y,z,rx,rz,noEdge){
 var o=new T.Mesh(geo,mat);
@@ -260,27 +260,48 @@ part(g,M,B(0.03,h*0.92,0.15),M.metal,o,y,0);part(g,M,B(0.04,0.05,0.3),M.metal,o,
 }
 function buildKnee(g,M,scene){
 var P=function(p,geo,m,x,y,z,rx,rz,ne){part(p,M,geo,M[m],x,y,z,rx,rz,ne);};
+var G=function(p,geo,x,y,z){var o=new T.Mesh(geo,M.glow);o.position.set(x,y,z);p.add(o);return o;};
 var up=new T.Group(),upper=new T.Group(),low=new T.Group(),lower=new T.Group();
 up.position.y=2.1;up.rotation.x=0.16;upper.position.y=-2.1;up.add(upper);
 low.position.y=2.1;low.rotation.x=-0.04;lower.position.y=-2.1;low.add(lower);g.add(up);g.add(low);
 P(upper,new T.CylinderGeometry(0.6,0.56,2.2,40),'shell',0,3.2,0,0,0,true);
 P(lower,new T.CylinderGeometry(0.52,0.42,1.9,40),'shell',0,1.15,0,0,0,true);
 P(lower,new T.SphereGeometry(0.57,32,20),'shell',0,2.1,0,0,0,true);
-cuff(upper,M,3.95,0.64,0.6,0.16);cuff(upper,M,3.05,0.62,0.6,0.16);
-cuff(lower,M,1.2,0.52,0.55,0.16);cuff(lower,M,0.4,0.48,0.55,0.16);
-[0.62,-0.62].forEach(function(x){P(upper,B(0.05,1.4,0.13),'dark',x,2.8,0);P(lower,B(0.05,1.4,0.13),'dark',x*0.88,1.45,0);});
+var C=[[upper,3.95,0.64,0.6],[upper,3.05,0.62,0.6],[lower,1.2,0.52,0.55],[lower,0.4,0.48,0.55]];
+C.forEach(function(c){cuff(c[0],M,c[1],c[2],c[3],0.16);
+[-1,1].forEach(function(s){var tr=new T.Mesh(new T.TorusGeometry(c[2]+0.15,0.012,6,56),M.dark);tr.rotation.x=Math.PI/2;tr.position.y=c[1]+s*c[3]*0.2;c[0].add(tr);});});
+[0.62,-0.62].forEach(function(x){
+P(upper,B(0.05,1.4,0.13),'dark',x,2.8,0);P(lower,B(0.05,1.4,0.13),'dark',x*0.88,1.45,0);
+G(upper,B(0.058,1.2,0.02),x,2.8,0);G(lower,B(0.058,1.2,0.02),x*0.88,1.45,0);
+});
 [1,-1].forEach(function(s){
 var d=new T.Group();d.position.set(s*0.66,2.1,0);d.rotation.y=s*Math.PI/2;
 P(d,new T.CylinderGeometry(0.43,0.43,0.14,48),'dark',0,0,0,Math.PI/2,0,true);
 var r=new T.Mesh(new T.TorusGeometry(0.4,0.035,10,48),M.metal);r.position.z=0.07;d.add(r);
 P(d,new T.CylinderGeometry(0.33,0.33,0.02,48),'face',0,0,0.075,Math.PI/2,0,true);
 for(var i=0;i<36;i++){var a=i/36*Math.PI*2,tk=new T.Mesh(B(0.02,i%3?0.05:0.08,0.02),M.dark);tk.position.set(Math.cos(a)*0.37,Math.sin(a)*0.37,0.09);tk.rotation.z=a-Math.PI/2;d.add(tk);}
+var arc=new T.Mesh(new T.TorusGeometry(0.4,0.022,8,48,Math.PI*1.3),M.glow);arc.position.z=0.1;arc.rotation.z=-0.6;d.add(arc);
 P(d,new T.CylinderGeometry(0.1,0.1,0.14,24),'metal',0,0,0.12,Math.PI/2,0,true);
 P(d,B(0.1,0.2,0.05),'metal',0,0.5,0.03);
 lower.add(d);
+P(upper,new T.CylinderGeometry(0.07,0.07,1.3,20),'metal',s*0.45,2.75,-0.74,0,0,true);
+P(upper,new T.CylinderGeometry(0.078,0.078,0.08,20),'dark',s*0.45,3.35,-0.74,0,0,true);
+P(lower,new T.CylinderGeometry(0.04,0.04,1.5,16),'face',s*0.45,1.7,-0.74,0,0,true);
+P(upper,B(0.08,0.08,0.12),'dark',s*0.45,3.05,-0.72);P(lower,B(0.08,0.08,0.24),'dark',s*0.45,1.2,-0.62);
+G(upper,B(0.082,0.03,0.03),s*0.45,3.2,-0.82);
+[-0.2,0,0.2].forEach(function(x){var z=Math.sqrt(0.585*0.585-x*x);
+P(upper,new T.CylinderGeometry(0.06,0.06,0.03,20),'face',x,3.5,z,Math.PI/2,0,true);
+P(upper,new T.CylinderGeometry(0.06,0.06,0.03,20),'face',x,3.5,-z,Math.PI/2,0,true);});
 });
+P(upper,B(0.12,0.26,0.4),'dark',0.66,3.5,0);G(upper,B(0.124,0.03,0.3),0.66,3.5,0);
+P(upper,new T.CylinderGeometry(0.012,0.012,0.2,8),'metal',0.66,3.7,-0.12,0,0,true);
+function imu(p,y,z){P(p,B(0.22,0.1,0.14),'dark',0,y,z);P(p,B(0.12,0.03,0.1),'face',-0.04,y+0.06,z);G(p,new T.SphereGeometry(0.025,10,8),0.07,y+0.06,z);}
+imu(upper,3.95,0.86);imu(lower,0.4,0.71);
 var ring=new T.Mesh(new T.RingGeometry(1.05,1.1,64),M.ring);ring.rotation.x=-Math.PI/2;ring.position.y=0.005;scene.add(ring);
 var disc=new T.Mesh(new T.CircleGeometry(1.05,64),M.disc);disc.rotation.x=-Math.PI/2;scene.add(disc);
+var halo=new T.Mesh(new T.RingGeometry(1.2,1.23,64),M.scan);halo.rotation.x=-Math.PI/2;halo.position.y=0.006;scene.add(halo);
+var sc=new T.Mesh(new T.TorusGeometry(0.98,0.008,6,72),M.scan);sc.rotation.x=Math.PI/2;scene.add(sc);
+return function(t){var f=(t/1000%4)/4;sc.position.y=f*4.5;M.glow.opacity=0.75+0.25*Math.sin(t/300);};
 }
 function mount(link,w,h,fov,cam,look,build,knee){
 try{
@@ -289,8 +310,8 @@ ren.setPixelRatio(Math.max(window.devicePixelRatio||1,2));ren.setSize(w,h,false)
 var scene=new T.Scene(),c=new T.PerspectiveCamera(fov,w/h,0.1,60),M=mats(),spin=new T.Group();
 c.position.set(cam[0],cam[1],cam[2]);c.lookAt(look[0],look[1],look[2]);
 scene.add(new T.AmbientLight(0xffffff,0.75));var sun=new T.DirectionalLight(0xffffff,0.85);sun.position.set(3,6,4);scene.add(sun);
-scene.add(spin);build(spin,M,scene);colors(M);
-var it={ren:ren,scene:scene,cam:c,spin:spin,M:M,vis:true};items.push(it);
+scene.add(spin);var tick=build(spin,M,scene);colors(M);
+var it={ren:ren,scene:scene,cam:c,spin:spin,M:M,vis:true,tick:typeof tick==="function"?tick:null};items.push(it);
 ren.render(scene,c);
 link.appendChild(cv);
 var fb=link.querySelector('img,.knee');if(fb)fb.style.display='none';
@@ -299,13 +320,13 @@ if('IntersectionObserver' in window){new IntersectionObserver(function(e){it.vis
 }
 function frame(t){
 var any=false;
-items.forEach(function(it){if(it.vis){any=true;it.spin.rotation.y=reduce?0.6:t/1000*(2*Math.PI/26);it.ren.render(it.scene,it.cam);}});
+items.forEach(function(it){if(it.vis){any=true;it.spin.rotation.y=reduce?0.6:t/1000*(2*Math.PI/26);if(it.tick)it.tick(t);it.ren.render(it.scene,it.cam);}});
 raf=any?requestAnimationFrame(frame):0;
 }
 function run(){if(!raf&&!reduce)raf=requestAnimationFrame(frame);}
 var rv=document.querySelector('.rover'),kn=document.querySelector('.kneewrap');
 if(rv)mount(rv,170,170,30,[0,2.8,8.6],[0,0.5,0],function(g,M,s){buildRover(g,M,s);},false);
-if(kn)mount(kn,130,240,30,[0,3.0,9.4],[0,2.2,0],function(g,M,s){buildKnee(g,M,s);},false);
+if(kn)mount(kn,140,260,30,[0,3.0,9.4],[0,2.2,0],function(g,M,s){return buildKnee(g,M,s);},false);
 run();
 if(window.matchMedia){var mq=matchMedia('(prefers-color-scheme: dark)');if(mq.addEventListener)mq.addEventListener('change',function(){items.forEach(function(it){colors(it.M);it.ren.render(it.scene,it.cam);});});}
 })();
