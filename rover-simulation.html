@@ -30,30 +30,6 @@ button:hover{border-color:var(--accent)}button:focus-visible,input:focus-visible
 #status{font-weight:600;color:var(--accent)}
 small{color:var(--muted)}
 
-/* Back to Portfolio */
-<a href="https://sneh-patel-portfolio-mu.vercel.app/" style="
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 18px;
-  background-color: var(--panel, #f7f9fb);
-  color: var(--text, #1b232c);
-  border: 1px solid var(--line, #cdd5de);
-  border-radius: 9999px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease, color 0.25s ease;
-" onmouseover="this.style.transform='translateY(-4px) scale(1.03)'; this.style.boxShadow='0 10px 22px rgba(0,0,0,0.16)'; this.style.borderColor='var(--accent, #2f6fdb)'; this.style.color='var(--accent, #2f6fdb)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.08)'; this.style.borderColor='var(--line, #cdd5de)'; this.style.color='var(--text, #1b232c)';">
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent, #2f6fdb)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-    <line x1="19" y1="12" x2="5" y2="12"></line>
-    <polyline points="12 19 5 12 12 5"></polyline>
-  </svg>
-  <span>Back to Portfolio</span>
-</a>  
-
 /* Dropdown Accordion Styles */
 details.specs-dropdown {
   border: 1px solid var(--line);
@@ -79,6 +55,33 @@ code{background:var(--panel);padding:1px 4px;border-radius:3px;font-family:monos
 @media(max-width:720px){#app{flex-direction:column}aside{width:100%;height:46%;border-left:0;border-top:1px solid var(--line)}}
 </style></head>
 <body>
+
+<!-- Floating Back to Portfolio Button -->
+<div style="position: absolute; top: 16px; left: 16px; z-index: 9999;">
+  <a href="https://sneh-patel-portfolio-mu.vercel.app/" style="
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background-color: var(--panel, #f7f9fb);
+    color: var(--text, #1b232c);
+    border: 1px solid var(--line, #cdd5de);
+    border-radius: 9999px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+  " onmouseover="this.style.transform='translateY(-4px) scale(1.03)'; this.style.boxShadow='0 10px 22px rgba(0,0,0,0.16)'; this.style.borderColor='var(--accent, #2f6fdb)'; this.style.color='var(--accent, #2f6fdb)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.08)'; this.style.borderColor='var(--line, #cdd5de)'; this.style.color='var(--text, #1b232c)';">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent, #2f6fdb)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    <span>Back to Portfolio</span>
+  </a>
+</div>
+
 <div id="app">
 <div id="view"><div id="hint">Drag to orbit · right-drag to pan · scroll or pinch to zoom</div></div>
 <aside>
@@ -178,7 +181,7 @@ const wheels=[];
  const sp=new THREE.Mesh(new THREE.BoxGeometry(.5,.05,.25),metal);w.add(sp);
  box(.4,.22,.2,M(0x4b5260),x,.3,z>0?.58:-.58,rover);wheels.push(w)});
 // electronics
-box(.95,.26,.42,M(0xf2a0c8),-.15,.66,-.38,rover);                 // battery
+box(.95,.26,.42,M(0xf2a0c8),-.15,.66,-.38,rover);                  // battery
 const pcb=box(.62,.04,.78,M(0x8a3fb0),-.8,.54,.12,rover);
 box(.26,.07,.32,metal,0,.05,.12,pcb);box(.14,.05,.14,dk,.18,.05,-.2,pcb);box(.1,.05,.1,dk,-.2,.05,-.25,pcb);
 const ant=box(.12,.015,.26,M(0xe0b050),0,.03,-.3,pcb);
