@@ -13,36 +13,9 @@ canvas#c{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
 #tip{position:absolute;pointer-events:none;display:none;max-width:250px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px;box-shadow:0 4px 16px #0003;font-size:12px}
 #tip b{display:block;font-size:13px;margin-bottom:2px}#tip i{color:var(--accent);font-style:normal;display:block;margin-top:3px}
 #hint{position:absolute;left:12px;bottom:12px;font-size:12px;color:var(--muted);background:var(--panel);padding:5px 9px;border-radius:6px;border:1px solid var(--line);pointer-events:none}
-
-<a href="https://sneh-patel-portfolio-mu.vercel.app/" style="
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 18px;
-  background-color: var(--panel, #f7f9fb);
-  color: var(--text, #1b232c);
-  border: 1px solid var(--line, #cdd5de);
-  border-radius: 9999px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease, color 0.25s ease;
-" onmouseover="this.style.transform='translateY(-4px) scale(1.03)'; this.style.boxShadow='0 10px 22px rgba(0,0,0,0.16)'; this.style.borderColor='var(--accent, #2f6fdb)'; this.style.color='var(--accent, #2f6fdb)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.08)'; this.style.borderColor='var(--line, #cdd5de)'; this.style.color='var(--text, #1b232c)';">
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent, #2f6fdb)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-    <line x1="19" y1="12" x2="5" y2="12"></line>
-    <polyline points="12 19 5 12 12 5"></polyline>
-  </svg>
-  <span>Back to Portfolio</span>
-</a>
- 
-/* Segmented Control Styles */
-#seg{display:flex;gap:0;background:var(--bg);border:1px solid var(--line);border-radius:8px;overflow:hidden}
-#seg button{border:0;border-radius:0;padding:5px 9px;background:transparent;font-size:11px}#seg button.on{background:var(--accent);color:#fff;font-weight:600}
-
+#seg{position:absolute;top:12px;left:12px;display:flex;gap:0;background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+#seg button{border:0;border-radius:0;padding:8px 14px;background:transparent}#seg button.on{background:var(--accent);color:#fff;font-weight:600}
 aside{width:310px;background:var(--panel);border-left:1px solid var(--line);padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
-.header-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
 h1{font-size:17px;margin:0}h2{font-size:12px;margin:0 0 6px;color:var(--muted);font-weight:600}
 label{display:flex;justify-content:space-between;align-items:center;gap:8px}
 input[type=range]{width:100%;accent-color:var(--accent)}
@@ -56,15 +29,11 @@ canvas#ch{width:100%;height:80px;background:var(--bg);border-radius:8px}small{co
 #game{display:none;background:var(--bg);border-radius:8px;padding:9px}#game b{font-size:15px}
 @media(max-width:760px){#app{flex-direction:column}aside{width:100%;height:50%;border-left:0;border-top:1px solid var(--line)}}
 </style></head><body><div id="app">
-<div id="view">
-<a href="#" id="back-btn" onclick="history.back();return false;"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</a>
-<canvas id="c"></canvas>
+<div id="view"><canvas id="c"></canvas>
+<div id="seg"><button id="vx" class="on">X-ray anatomy</button><button id="vb">With brace</button></div>
 <div id="tip"></div><div id="hint">Drag to orbit · right-drag to pan · scroll to zoom · hover a part for its name</div></div>
 <aside>
-<div class="header-row">
-  <div><h1>Adaptive knee brace</h1><small>Sensing, compression and rehab tracking</small></div>
-  <div id="seg"><button id="vx" class="on">X-ray</button><button id="vb">Brace</button></div>
-</div>
+<div><h1>Adaptive knee brace</h1><small>Sensing, compression and rehab tracking</small></div>
 <section><h2>Control the knee</h2>
 <label>Flexion angle <b id="av">0°</b></label><input id="ang" type="range" min="0" max="140" value="0">
 <label style="margin-top:8px">Movement <select id="mode"><option value="manual">Manual (slider)</option><option value="walk">Walking</option><option value="ext">Seated extension</option><option value="sq">Squat</option></select></label>
@@ -186,11 +155,16 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 function setView(){const x=view_==='x',a=x||ghost;
  scene.background.setHex(x?BGX:BGL);G.a.forEach(o=>o.visible=a&&(!o.userData.mu||(x&&muOn)));G.b.forEach(o=>o.visible=!x);G.s.forEach(o=>o.visible=!x);
  bm.forEach(m=>{m.emissive.setHex(x?0x16324a:0);m.opacity=x?1:.9});skinM.opacity=ghost?.16:.96;skinM.depthWrite=!ghost;
- $('vx').classList.toggle('on',x);$('vb').classList.toggle('on',!x)}$('vx').onclick=()=>{view_='x';setView()};$('vb').onclick=()=>{view_='b';setView()};$('ghost').onchange=e=>{ghost=e.target.checked;setView()};
+ $('vx').classList.toggle('on',x);$('vb').classList.toggle('on',!x)}
+$('vx').onclick=()=>{view_='x';setView()};$('vb').onclick=()=>{view_='b';setView()};
+$('ghost').onchange=e=>{ghost=e.target.checked;setView()};
 $('lock').onclick=()=>{locked=!locked;$('lock').classList.toggle('on',locked);$('lock').textContent=locked?'Unlock hinge':'Lock hinge (stationary support)';$('ang').disabled=locked};
 $('mode').onchange=()=>{ph=0;mt=S.ang;$('ang').value=S.ang};
 $('ang').oninput=e=>{mt=+e.target.value;$('mode').value='manual';ph=0};
-$('mu').onchange=e=>{muOn=e.target.checked;setView()};$('tempo').oninput=e=>{$('tv').textContent=e.target.value+'×';if($('mode').value==='manual'){$('mode').value='walk';ph=0}};$('gm').onchange=e=>{gameOn=e.target.checked;$('game').style.display=gameOn?'block':'none'};$('rs').onclick=()=>{Object.assign(S,{min:180,max:0,reps:0,up:false,peaks:[],pvel:0,score:0,streak:0,target:90})};
+$('mu').onchange=e=>{muOn=e.target.checked;setView()};
+$('tempo').oninput=e=>{$('tv').textContent=e.target.value+'×';if($('mode').value==='manual'){$('mode').value='walk';ph=0}};
+$('gm').onchange=e=>{gameOn=e.target.checked;$('game').style.display=gameOn?'block':'none'};
+$('rs').onclick=()=>{Object.assign(S,{min:180,max:0,reps:0,up:false,peaks:[],pvel:0,score:0,streak:0,target:90})};
 function rep(pk){S.reps++;S.peaks.push(pk);if(!gameOn)return;
  if(pk>=S.target-5){S.streak++;S.score+=100*Math.min(S.streak,5)}else{S.streak=0;S.score+=20}
  S.target=5*(12+Math.random()*10|0)}
@@ -229,12 +203,13 @@ function ui(){const avg=S.peaks.length?S.peaks.reduce((a,b)=>a+b)/S.peaks.length
  $('av').textContent=$('m1').textContent=S.ang.toFixed(0)+'°';$('m2').textContent=S.w.toFixed(0)+'°/s';
  $('m3').textContent=(S.min>S.max?0:S.min.toFixed(0))+'–'+S.max.toFixed(0)+'°';$('m4').textContent=S.reps;
  $('m5').textContent=avg?avg.toFixed(0)+'°':'–';$('m6').textContent=S.pvel.toFixed(0)+'°/s';$('m7').textContent=S.comp.toFixed(0)+' mmHg';$('m8').textContent=act;
- $('eq').textContent=(S.q*100).toFixed(0)+'\%';$('eh').textContent=(S.h*100).toFixed(0)+'%';$('bq').style.width=S.q*100+'\%';$('bh').style.width=S.h*100+'%';
+ $('eq').textContent=(S.q*100).toFixed(0)+'%';$('eh').textContent=(S.h*100).toFixed(0)+'%';$('bq').style.width=S.q*100+'%';$('bh').style.width=S.h*100+'%';
  if(gameOn){$('gt').textContent=S.target+'°';$('gb').style.width=clamp(S.ang/S.target*100,0,100)+'%';$('gs').textContent=S.score;$('gl').textContent=S.streak+' · '+(1+S.score/500|0)}
  chart()}
 // hover
 const ray=new THREE.Raycaster(),mp=new THREE.Vector2(),tip=$('tip');let mx=0,my=0,moved=false,hov=null,dragging=false;
-$('c').addEventListener('pointermove',e=>{const r=$('c').getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;mp.set(mx/r.width*2-1,-(my/r.height)*2+1);moved=true;dragging=e.buttons>0});$('c').addEventListener('pointerleave',()=>{moved=false;unhover()});
+$('c').addEventListener('pointermove',e=>{const r=$('c').getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;mp.set(mx/r.width*2-1,-(my/r.height)*2+1);moved=true;dragging=e.buttons>0});
+$('c').addEventListener('pointerleave',()=>{moved=false;unhover()});
 function unhover(){if(hov){hov.material.color.setHex(hov.userData.c);hov=null}tip.style.display='none'}
 function pick(){const list=[...(view_==='x'||ghost?G.a:[]),...(view_==='b'?G.b:[])].filter(o=>o.visible);
  if(dragging){unhover();return}
