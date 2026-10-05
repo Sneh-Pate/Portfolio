@@ -13,7 +13,7 @@ canvas#c{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
 #tip{position:absolute;pointer-events:none;display:none;max-width:250px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px;box-shadow:0 4px 16px #0003;font-size:12px}
 #tip b{display:block;font-size:13px;margin-bottom:2px}#tip i{color:var(--accent);font-style:normal;display:block;margin-top:3px}
 #hint{position:absolute;left:12px;bottom:12px;font-size:12px;color:var(--muted);background:var(--panel);padding:5px 9px;border-radius:6px;border:1px solid var(--line);pointer-events:none}
-#seg{position:absolute;top:12px;left:12px;display:flex;gap:0;background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+#seg{position:absolute;top:62px;left:12px;display:flex;gap:0;background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden;z-index:10}
 #seg button{border:0;border-radius:0;padding:8px 14px;background:transparent}#seg button.on{background:var(--accent);color:#fff;font-weight:600}
 aside{width:310px;background:var(--panel);border-left:1px solid var(--line);padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
 h1{font-size:17px;margin:0}h2{font-size:12px;margin:0 0 6px;color:var(--muted);font-weight:600}
@@ -30,6 +30,34 @@ canvas#ch{width:100%;height:80px;background:var(--bg);border-radius:8px}small{co
 @media(max-width:760px){#app{flex-direction:column}aside{width:100%;height:50%;border-left:0;border-top:1px solid var(--line)}}
 </style></head><body><div id="app">
 <div id="view"><canvas id="c"></canvas>
+<a href="https://sneh-patel-portfolio-mu.vercel.app/" style="
+  position:absolute;
+  top:12px;
+  left:12px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 18px;
+  background-color:var(--panel,#f7f9fb);
+  color:var(--text,#1b232c);
+  border:1px solid var(--line,#cdd5de);
+  border-radius:9999px;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  font-size:14px;
+  font-weight:600;
+  text-decoration:none;
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s ease,border-color .25s ease,color .25s ease;
+  z-index:10;
+"
+onmouseover="this.style.transform='translateY(-4px) scale(1.03)';this.style.boxShadow='0 10px 22px rgba(0,0,0,.16)';this.style.borderColor='var(--accent,#2f6fdb)';this.style.color='var(--accent,#2f6fdb)';"
+onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 12px rgba(0,0,0,.08)';this.style.borderColor='var(--line,#cdd5de)';this.style.color='var(--text,#1b232c)';">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent,#2f6fdb)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="19" y1="12" x2="5" y2="12"></line>
+    <polyline points="12 19 5 12 12 5"></polyline>
+  </svg>
+  <span>Back to Portfolio</span>
+</a>
 <div id="seg"><button id="vx" class="on">X-ray anatomy</button><button id="vb">With brace</button></div>
 <div id="tip"></div><div id="hint">Drag to orbit · right-drag to pan · scroll to zoom · hover a part for its name</div></div>
 <aside>
