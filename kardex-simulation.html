@@ -3,71 +3,61 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kardex Shuttle VLM Simulator</title>
 <style>
-:root{--bg:#eef1f6;--panel:#ffffff;--text:#3b4f63;--muted:#6f8294;--line:#d5dce5;--accent:#4a6a86;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171d24;--panel:#212932;--text:#e3e9ef;--muted:#92a1af;--line:#37424d;--accent:#8fb2d1}}
-:root[data-theme="dark"]{--bg:#171d24;--panel:#212932;--text:#e3e9ef;--muted:#92a1af;--line:#37424d;--accent:#8fb2d1}
+:root{--bg:#eef1f6;--panel:#ffffff;--text:#3b4f63;--muted:#6f8294;--line:#d5dce5;--accent:#4a6a86;--ok:#2f8f5b;--bad:#b43a3a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171d24;--panel:#212932;--text:#e3e9ef;--muted:#92a1af;--line:#37424d;--accent:#8fb2d1;--ok:#5cc58b;--bad:#e27a7a}}
+:root[data-theme="dark"]{--bg:#171d24;--panel:#212932;--text:#e3e9ef;--muted:#92a1af;--line:#37424d;--accent:#8fb2d1;--ok:#5cc58b;--bad:#e27a7a}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font:14px/1.45 "Open Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
 #app{display:flex;height:100%}
 #view{flex:1;position:relative;min-width:0;overflow:hidden}
 canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}canvas:active{cursor:grabbing}
 #hint{position:absolute;left:12px;bottom:12px;font-size:12px;color:var(--muted);background:var(--panel);padding:5px 9px;border-radius:6px;border:1px solid var(--line);pointer-events:none}
-aside{width:290px;background:var(--panel);border-left:1px solid var(--line);padding:18px;overflow-y:auto;display:flex;flex-direction:column;gap:14px}
+aside{width:340px;background:var(--panel);border-left:1px solid var(--line);padding:18px;overflow-y:auto;display:flex;flex-direction:column;gap:14px}
 h1{font-size:20px;margin:0;font-weight:700}h2{font-size:13px;margin:0 0 6px;color:var(--muted);font-weight:600}
 label{display:flex;justify-content:space-between;align-items:center;font-size:13px;gap:8px}
-input[type=range]{width:100%;accent-color:var(--accent)}select{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:4px 6px}
-.btns{display:flex;gap:6px;flex-wrap:wrap}
-button{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 12px;cursor:pointer}
+input[type=range]{width:100%;accent-color:var(--accent)}
+input[type=text],input[type=number],select{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;min-width:0}
+.f{display:flex;gap:6px}.f input[type=text]{flex:1}.f input[type=number]{width:70px}
+button{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 12px;cursor:pointer}
 button.p{background:var(--accent);color:var(--panel);border-color:var(--accent);font-weight:600}
+button.g{background:var(--ok);color:#fff;border-color:var(--ok);font-weight:600}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #status{font-weight:700;font-size:15px;color:var(--accent)}small{color:var(--muted)}
 .stat{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--line)}
-@media(max-width:720px){#app{flex-direction:column}aside{width:100%;height:48%;border-left:0;border-top:1px solid var(--line)}}
+#inv{max-height:220px;overflow-y:auto;border:1px solid var(--line);border-radius:6px}
+.row{display:grid;grid-template-columns:1fr auto 40px;gap:8px;padding:4px 8px;border-bottom:1px solid var(--line);cursor:pointer;font-size:12.5px}
+.row:hover{background:var(--bg)}.row small{text-align:right}
+#msg{min-height:20px;font-size:12.5px;font-weight:600}
+@media(max-width:720px){#app{flex-direction:column}aside{width:100%;height:55%;border-left:0;border-top:1px solid var(--line)}}
 </style></head>
 <body>
- 
-<!-- Floating Back to Portfolio Button -->
+
 <div style="position: absolute; top: 16px; left: 16px; z-index: 9999;">
-  <a href="https://sneh-patel-portfolio-mu.vercel.app/" style="
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 18px;
-    background-color: var(--panel, #f7f9fb);
-    color: var(--text, #1b232c);
-    border: 1px solid var(--line, #cdd5de);
-    border-radius: 9999px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease, color 0.25s ease;
-  " onmouseover="this.style.transform='translateY(-4px) scale(1.03)'; this.style.boxShadow='0 10px 22px rgba(0,0,0,0.16)'; this.style.borderColor='var(--accent, #2f6fdb)'; this.style.color='var(--accent, #2f6fdb)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.08)'; this.style.borderColor='var(--line, #cdd5de)'; this.style.color='var(--text, #1b232c)';">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent, #2f6fdb)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="19" y1="12" x2="5" y2="12"></line>
-      <polyline points="12 19 5 12 12 5"></polyline>
-    </svg>
+  <a href="https://sneh-patel-portfolio-mu.vercel.app/" style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background-color:var(--panel,#f7f9fb);color:var(--text,#1b232c);border:1px solid var(--line,#cdd5de);border-radius:9999px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,0.08);transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s ease,border-color .25s ease,color .25s ease;" onmouseover="this.style.transform='translateY(-4px) scale(1.03)'; this.style.boxShadow='0 10px 22px rgba(0,0,0,0.16)'; this.style.borderColor='var(--accent, #2f6fdb)'; this.style.color='var(--accent, #2f6fdb)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.08)'; this.style.borderColor='var(--line, #cdd5de)'; this.style.color='var(--text, #1b232c)';">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent, #2f6fdb)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
     <span>Back to Portfolio</span>
   </a>
-</div> 
- 
+</div>
+
 <div id="app">
 <div id="view"><div id="hint">Drag to orbit · right-drag to pan · scroll or pinch to zoom</div></div>
 <aside>
 <div><h1>Vertical Lift Module</h1><small>Kardex Shuttle · enclosed shelf-based storage</small></div>
 <section><h2>Machine status</h2><div id="status">Idle</div>
 <div class="stat"><span>Tray in motion</span><b id="cur">none</b></div>
-<div class="stat"><span>Trays delivered</span><b id="done">0</b></div>
+<div class="stat"><span>Operations done</span><b id="done">0</b></div>
 <div class="stat"><span>Queued requests</span><b id="q">0</b></div></section>
-<section><h2>Request a tray</h2>
-<label>Stack <select id="stack"><option value="0">Front stack</option><option value="1">Rear stack</option></select></label>
-<label style="margin-top:8px">Tray position <b id="sv">11</b></label><input id="slot" type="range" min="1" max="22" value="11">
-<div class="btns" style="margin-top:8px"><button class="p" id="go">Retrieve tray</button><button id="rnd">Random tray</button></div></section>
+<section><h2>Inventory (<span id="ic">0</span> parts) · click a row to select</h2><div id="inv"></div></section>
+<section><h2>Pick · remove parts</h2>
+<div class="f"><input type="text" id="pn" list="invnames" placeholder="Part name" autocomplete="off"><input type="number" id="pq" min="1" value="1" aria-label="Quantity"><button class="p" id="pick">Pick</button></div></section>
+<section><h2>Put · add parts</h2>
+<div class="f"><input type="text" id="un" list="catnames" placeholder="Part name" autocomplete="off"><input type="number" id="uq" min="1" value="10" aria-label="Quantity"><button class="g" id="put">Put</button></div>
+<datalist id="invnames"></datalist><datalist id="catnames"></datalist></section>
+<div id="msg"></div>
 <section><label>Machine speed <b id="spv">1×</b></label><input id="speed" type="range" min="0.25" max="4" step="0.25" value="1">
 <label style="margin-top:10px"><span>Auto-pick demo</span><input type="checkbox" id="auto"></label>
 <label style="margin-top:6px"><span>Cutaway (hide side and back panels)</span><input type="checkbox" id="cut" checked></label></section>
-<small>The extractor travels in the central aisle, pulls the chosen tray out of its stack, lifts it to the access window, and presents it to the operator before returning it.</small>
+<small>Pick pulls the tray holding the part and removes the quantity. Put adds to an existing tray, or stores a new part in a random empty tray.</small>
 </aside></div>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -102,17 +92,93 @@ const glass=new THREE.MeshStandardMaterial({color:0xc9d6e2,transparent:true,opac
 const sides=[-2,2].map(x=>{const s=box(.05,H,3.1,glass,x,H/2,0);s.castShadow=false;return s});
 const shutP=new THREE.Group();shutP.position.set(0,2.3,1.56);scene.add(shutP);
 const shut=box(3.4,1.2,.03,M(0xb9c8d6,{roughness:.4}),0,-.6,0,shutP);
-// rails and belts
 [1,-1].forEach(z=>[-1.92,1.92].forEach(x=>box(.08,5.1,.95,steel,x,5.25,z)));
 [-1.97,1.97].forEach(x=>box(.05,H-.7,.14,dk,x,H/2,0));
+
+// ---- part shapes (each fits ~1 unit, <0.7 tall; scaled down on the tray) ----
+const MT=(c,o)=>M(c,Object.assign({roughness:.35,metalness:.7},o)),S=MT(0xb4bcc4),BR=MT(0xc9a24a),CU=MT(0xc0702f),AL=MT(0xcfd4d9),GO=MT(0xd9b94a),
+ BK=M(0x23272c,{roughness:.7}),RB=M(0x16181a,{roughness:.9}),BL=M(0x2f5fae),GR=M(0x2e8b57),RD=M(0xc23b3b),YE=M(0xe2b92b),WH=M(0xeeeeee),TN=M(0xd9b98a),
+ GL=M(0xdfeaf2,{transparent:true,opacity:.55}),RT=M(0xe03030,{transparent:true,opacity:.8});
+const R=Math.PI/2;
+function cy(g,r,h,c,x=0,y=0,z=0,seg=20,rz=0){const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,seg),c);m.position.set(x,y,z);m.rotation.z=rz;m.castShadow=true;g.add(m);return m}
+function bx(g,w,h,d,c,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),c);m.position.set(x,y,z);m.castShadow=true;g.add(m);return m}
+function to(g,Rr,r,c,x,y,z){const m=new THREE.Mesh(new THREE.TorusGeometry(Rr,r,10,28),c);m.position.set(x,y,z);m.rotation.x=R;m.castShadow=true;g.add(m);return m}
+const P={
+ 'Hex Bolt M8':g=>{cy(g,.28,.2,S,-.5,.28,0,6,R);cy(g,.14,.9,S,.1,.28,0,12,R)},
+ 'Hex Nut M8':g=>{cy(g,.34,.28,S,0,.14,0,6);cy(g,.16,.3,BK,0,.14,0,14)},
+ 'Flat Washer':g=>{to(g,.32,.08,S,0,.08,0)},
+ 'O-Ring Seal':g=>{to(g,.32,.06,RB,0,.06,0)},
+ 'Ball Bearing 6204':g=>{cy(g,.4,.3,S,0,.15,0,24);cy(g,.28,.32,BK,0,.15,0,24);cy(g,.21,.34,S,0,.15,0,20);cy(g,.1,.36,BK,0,.15,0,14)},
+ 'Spur Gear':g=>{cy(g,.34,.2,BR,0,.1,0,24);for(let k=0;k<12;k++){const a=k/12*Math.PI*2,m=bx(g,.14,.2,.11,BR,Math.cos(a)*.38,.1,Math.sin(a)*.38);m.rotation.y=-a}cy(g,.1,.22,BK,0,.1,0,12)},
+ 'Compression Spring':g=>{const p=[];for(let k=0;k<=80;k++){const t=k/80,a=t*Math.PI*14;p.push(new THREE.Vector3(-.5+t,.26+.2*Math.cos(a),.2*Math.sin(a)))}const m=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(p),120,.04,6),S);m.castShadow=true;g.add(m)},
+ 'Resistor 10k':g=>{cy(g,.13,.5,TN,0,.13,0,16,R);[-.12,0,.12].forEach((x,k)=>cy(g,.135,.05,[BR,BK,RD][k],x,.13,0,16,R));[-1,1].forEach(s=>cy(g,.015,.5,S,s*.45,.13,0,6,R))},
+ 'Capacitor 100uF':g=>{cy(g,.22,.6,BL,0,.3,0,20);cy(g,.225,.12,AL,0,.55,0,20);cy(g,.226,.1,WH,.0,.25,0,20)},
+ 'LED 5mm Red':g=>{cy(g,.15,.25,RT,0,.125,0,16);const m=new THREE.Mesh(new THREE.SphereGeometry(.15,14,8,0,Math.PI*2,0,R),RT);m.position.y=.25;g.add(m);cy(g,.19,.04,RT,0,.02,0,16)},
+ 'Relay 24V':g=>{bx(g,.8,.55,.6,BL,0,.28,0);bx(g,.6,.02,.4,WH,0,.56,0);[-1,1].forEach(s=>bx(g,.08,.1,.08,GO,s*.3,-.02,.2))},
+ 'Microcontroller IC':g=>{bx(g,.8,.14,.5,BK,0,.14,0);for(let k=0;k<6;k++)[-1,1].forEach(s=>bx(g,.06,.08,.12,S,-.33+k*.13,.06,s*.3))},
+ 'Terminal Block':g=>{bx(g,.9,.35,.45,GR,0,.18,0);for(let k=0;k<3;k++)cy(g,.09,.06,S,-.3+k*.3,.38,0,10)},
+ 'Stepper Motor':g=>{bx(g,.5,.6,.6,BK,.1,.3,0);bx(g,.1,.62,.62,S,-.18,.3,0);cy(g,.06,.35,S,-.36,.3,0,12,R)},
+ 'V-Belt Pulley':g=>{cy(g,.4,.08,S,0,.04,0,24);cy(g,.4,.08,S,0,.28,0,24);cy(g,.28,.3,S,0,.18,0,24);cy(g,.1,.32,BK,0,.18,0,12)},
+ 'Steel Shaft 8mm':g=>{cy(g,.08,1.1,S,0,.08,0,12,R)},
+ 'Toggle Switch':g=>{bx(g,.5,.3,.4,BK,0,.15,0);cy(g,.04,.4,S,0,.45,0,8,.4);cy(g,.07,.06,S,0,.3,0,10)},
+ 'Glass Fuse 10A':g=>{cy(g,.12,.6,GL,0,.12,0,16,R);[-1,1].forEach(s=>cy(g,.14,.14,BR,s*.3,.14,0,16,R))},
+ 'Pin Header':g=>{bx(g,.9,.14,.2,BK,0,.07,0);for(let k=0;k<8;k++)cy(g,.02,.5,GO,-.4+k*.115,.3,0,6)},
+ 'Heat Sink':g=>{bx(g,.9,.06,.6,AL,0,.03,0);for(let k=0;k<6;k++)bx(g,.08,.5,.6,AL,-.4+k*.16,.3,0)},
+ 'Copper Coil':g=>{to(g,.3,.14,CU,0,.14,0);to(g,.3,.14,CU,0,.2,0)},
+ 'Cable Spool':g=>{cy(g,.4,.06,BK,0,.06,0,24);cy(g,.4,.06,BK,0,.44,0,24);cy(g,.28,.38,RD,0,.25,0,20)},
+ 'Proximity Sensor':g=>{cy(g,.16,.9,YE,0,.16,0,16,R);cy(g,.2,.1,S,-.1,.16,0,6,R);cy(g,.15,.04,BK,.46,.16,0,16,R)},
+ 'Circuit Breaker':g=>{bx(g,.5,.65,.4,WH,0,.33,0);bx(g,.14,.2,.1,BK,0,.5,.2);bx(g,.4,.04,.02,BK,0,.2,.2)}
+};
+const NAMES=Object.keys(P);
+function mkPart(n){const g=new THREE.Group();(P[n]||P[NAMES[Math.random()*NAMES.length|0]])(g);return g}
+
 // ---- trays ----
-const Y0=2.95,P=.22,N=22,TZ=[1,-1],trays=[[],[]];
-const carton=[0xd8c3a0,0xf1f1ee,0xcbb48e,0xe6e0d2];
+const Y0=2.95,PITCH=.22,N=22,TZ=[1,-1],trays=[[],[]];
 for(let s=0;s<2;s++)for(let i=0;i<N;i++){
  const gr=new THREE.Group(),plate=M(0x9db8d0,{roughness:.5});
  box(3.4,.04,.9,plate,0,.02,0,gr);box(3.4,.1,.03,M(0xe2e8ee),0,.07,.435,gr);box(3.4,.08,.03,M(0xc9d4de),0,.06,-.435,gr);
- if(Math.random()<.4)for(let k=0,n=1+Math.random()*3|0;k<=n;k++)box(.3+Math.random()*.4,.07+Math.random()*.08,.3+Math.random()*.3,M(carton[Math.random()*4|0],{roughness:.8}),-1.4+Math.random()*2.8,.1,-.2+Math.random()*.4,gr);
- const y=Y0+i*P;gr.position.set(0,y,TZ[s]);scene.add(gr);trays[s].push({g:gr,plate,y,z:TZ[s],s,i});}
+ const y=Y0+i*PITCH;gr.position.set(0,y,TZ[s]);scene.add(gr);trays[s].push({g:gr,plate,y,z:TZ[s],s,i,part:null,it:null});}
+function fill(t){
+ if(t.it){t.g.remove(t.it);t.it=null}
+ const e=t.part;if(!e||e.qty<=0)return;
+ const it=new THREE.Group(),n=Math.min(6,1+Math.ceil(e.qty/30));
+ for(let k=0;k<n;k++){const p=mkPart(e.b);p.scale.setScalar(.26);p.position.set(-1.3+k*(2.6/Math.max(n-1,1))*(n>1?1:0),.04,(Math.random()-.5)*.35);p.rotation.y=Math.random()*Math.PI*2;it.add(p)}
+ t.g.add(it);t.it=it}
+
+// ---- inventory ----
+const inv=[];
+const slots=trays.flat().sort(()=>Math.random()-.5);
+NAMES.slice().sort(()=>Math.random()-.5).slice(0,20).forEach((n,k)=>{const t=slots[k],e={name:n,qty:10+Math.random()*190|0,pend:0,s:t.s,i:t.i,b:n};t.part=e;inv.push(e);fill(t)});
+$('catnames').innerHTML=NAMES.map(n=>`<option value="${n}">`).join('');
+const esc=s=>s.replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
+const loc=e=>(e.s?'R':'F')+String(e.i+1).padStart(2,'0');
+function renderInv(){inv.sort((a,b)=>a.name.localeCompare(b.name));
+ $('inv').innerHTML=inv.map(e=>`<div class="row" data-n="${esc(e.name)}"><span>${esc(e.name)}</span><b>${e.qty}</b><small>${loc(e)}</small></div>`).join('')||'<div class="row"><small>Empty</small></div>';
+ $('invnames').innerHTML=inv.map(e=>`<option value="${esc(e.name)}">`).join('');$('ic').textContent=inv.length}
+$('inv').onclick=ev=>{const r=ev.target.closest('.row');if(r&&r.dataset.n){$('pn').value=$('un').value=r.dataset.n}};
+renderInv();
+function msg(t,bad){const m=$('msg');m.textContent=t;m.style.color=bad?'var(--bad)':'var(--ok)'}
+const find=n=>inv.find(e=>e.name.toLowerCase()===n.trim().toLowerCase());
+const tray=e=>trays[e.s][e.i];
+function pickReq(name,q,quiet){
+ const e=find(name);if(!e)return msg('"'+name.trim()+'" is not in the inventory.',1);
+ if(!(q>=1))return msg('Enter a quantity of 1 or more.',1);
+ const avail=e.qty-queue.filter(j=>j.e===e&&j.type==='pick').reduce((a,j)=>a+j.q,0);
+ if(q>avail)return msg('Only '+avail+' × '+e.name+' available.',1);
+ e.pend++;queue.push({t:tray(e),type:'pick',e,q});if(!quiet)msg('Pick queued: '+q+' × '+e.name+' (tray '+loc(e)+')');return 1}
+function putReq(name,q){
+ name=name.trim().slice(0,28);if(!name)return msg('Enter a part name.',1);if(!(q>=1))return msg('Enter a quantity of 1 or more.',1);
+ let e=find(name),extra='';
+ if(!e){const free=trays.flat().filter(t=>!t.part);if(!free.length)return msg('Kardex is full – no empty trays.',1);
+  const t=free[Math.random()*free.length|0],b=NAMES.find(n=>n.toLowerCase()===name.toLowerCase())||NAMES[Math.random()*NAMES.length|0];
+  e={name,qty:0,pend:0,s:t.s,i:t.i,b};t.part=e;inv.push(e);extra=' (new part, random tray)'}
+ e.pend++;queue.push({t:tray(e),type:'put',e,q});renderInv();msg('Put queued: '+q+' × '+e.name+' → tray '+loc(e)+extra)}
+function apply(j){const e=j.e;if(j.type==='pick')e.qty-=j.q;else e.qty+=j.q;e.pend--;
+ if(e.qty<=0&&e.pend<=0){inv.splice(inv.indexOf(e),1);j.t.part=null}fill(j.t);renderInv()}
+$('pick').onclick=()=>pickReq($('pn').value,+$('pq').value);
+$('put').onclick=()=>putReq($('un').value,+$('uq').value);
+[['pn','pick'],['pq','pick'],['un','put'],['uq','put']].forEach(([i,b])=>$(i).addEventListener('keydown',e=>{if(e.key==='Enter')$(b).click()}));
+
 // ---- extractor carriage ----
 const car=new THREE.Group();car.position.set(0,1.45,0);scene.add(car);
 box(3.5,.04,.96,steel,0,-.02,0,car);[-1.84,1.84].forEach(x=>box(.12,.5,1,pale,x,.2,0,car));
@@ -120,10 +186,11 @@ box(3.6,.06,.1,dk,0,-.06,.48,car);box(3.6,.06,.1,dk,0,-.06,-.48,car);
 // ---- animation ----
 let speed=1,auto=false,queue=[],seq=[],cur=null,active=null,loaded=false,delivered=0,idleT=0,shutT=1;
 const ease=p=>p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2,WIN=1.45;
-function build(t){return[
- {k:'car',to:t.y,l:'Extractor travelling to tray'},{k:'do',fn:()=>{loaded=true;t.plate.emissive.set(0x2f7bd6);t.plate.emissiveIntensity=.7}},
+function build(j){const t=j.t,put=j.type==='put',glow=put?0x2fa66a:0x2f7bd6;return[
+ {k:'car',to:t.y,l:'Extractor travelling to tray'},{k:'do',fn:()=>{loaded=true;t.plate.emissive.set(glow);t.plate.emissiveIntensity=.7}},
  {k:'tray',to:0,l:'Pulling tray into extractor'},{k:'car',to:WIN,l:'Lifting tray to access window'},
- {k:'do',fn:()=>shutT=.04},{k:'tray',to:1.2,l:'Presenting tray to operator'},{k:'wait',d:3.5,l:'Operator picking'},
+ {k:'do',fn:()=>shutT=.04},{k:'tray',to:1.2,l:'Presenting tray to operator'},
+ {k:'wait',d:4,l:(put?'Operator putting ':'Operator picking ')+j.q+' × '+j.e.name},{k:'do',fn:()=>apply(j)},
  {k:'tray',to:0,l:'Retracting tray'},{k:'do',fn:()=>shutT=1},{k:'car',to:t.y,l:'Returning tray to stack'},
  {k:'tray',to:t.z,l:'Sliding tray into stack'},{k:'do',fn:()=>{loaded=false;t.plate.emissive.set(0);delivered++}},
  {k:'car',to:WIN,l:'Extractor returning to home'}]}
@@ -132,22 +199,18 @@ function nextStep(){cur=seq.shift();while(cur&&cur.k==='do'){cur.fn();cur=seq.sh
  if(cur.k==='car'){cur.from=car.position.y;cur.dur=Math.abs(cur.to-cur.from)/2.4+.05}
  else if(cur.k==='tray'){cur.from=active.g.position.z;cur.dur=Math.abs(cur.to-cur.from)/1.1+.05}
  else cur.dur=cur.d}
-function request(s,i){const t=trays[s][i];if(t===active||queue.some(q=>q===t))return;queue.push(t)}
 function update(dt){
- shut_=shutP.scale.y;shutP.scale.y+=(shutT-shut_)*Math.min(1,dt*3*speed);
- if(!cur){if(!active&&queue.length){active=queue.shift();seq=build(active);nextStep()}
-  else if(auto&&!active){idleT+=dt;if(idleT>1.2){idleT=0;request(Math.random()*2|0,Math.random()*N|0)}}}
+ const sh=shutP.scale.y;shutP.scale.y+=(shutT-sh)*Math.min(1,dt*3*speed);
+ if(!cur){if(!active&&queue.length){const j=queue.shift();active=j.t;seq=build(j);nextStep()}
+  else if(auto&&!active){idleT+=dt;if(idleT>1.2){idleT=0;const c=inv.filter(e=>e.qty>0);if(c.length)pickReq(c[Math.random()*c.length|0].name,1,1)}}}
  else{cur.t+=dt*speed;const p=Math.min(1,cur.t/cur.dur),e=ease(p);
   if(cur.k==='car')car.position.y=cur.from+(cur.to-cur.from)*e;
   else if(cur.k==='tray')active.g.position.z=cur.from+(cur.to-cur.from)*e;
   if(p>=1)nextStep()}
  if(loaded&&active)active.g.position.y=car.position.y;
 }
-let shut_=1,uiT=0;
+let uiT=0;
 function ui(){$('status').textContent=cur?cur.l:'Idle · ready for request';$('cur').textContent=active?(active.s?'Rear ':'Front ')+(active.i+1):'none';$('done').textContent=delivered;$('q').textContent=queue.length}
-$('slot').oninput=e=>$('sv').textContent=e.target.value;
-$('go').onclick=()=>request(+$('stack').value,+$('slot').value-1);
-$('rnd').onclick=()=>request(Math.random()*2|0,Math.random()*N|0);
 $('speed').oninput=e=>{speed=+e.target.value;$('spv').textContent=speed+'×'};
 $('auto').onchange=e=>auto=e.target.checked;
 $('cut').onchange=e=>{const v=!e.target.checked;sides.forEach(s=>s.visible=v);back.visible=v};
