@@ -113,7 +113,6 @@ function trackVisitor(type) {
   localStorage.setItem('visitor_type_sneh_v1', type);
   document.getElementById('visitor-popup').style.bottom = '-200px';
   fetch(`https://api.countapi.xyz/hit/snehpatel-portfolio/${type.toLowerCase().replace(/\s+/g, '-')}`).catch(()=>{});
-  alert(`Thanks! Glad to have you here, ${type}.`);
 }
 </script>
 
