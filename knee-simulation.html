@@ -29,6 +29,60 @@ canvas#ch{width:100%;height:80px;background:var(--bg);border-radius:8px}small{co
 #game{display:none;background:var(--bg);border-radius:8px;padding:9px}#game b{font-size:15px}
 @media(max-width:760px){#app{flex-direction:column}aside{width:100%;height:50%;border-left:0;border-top:1px solid var(--line)}}
 </style></head><body><div id="app">
+
+
+
+<!--Site Visit Counter-->
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600&display=swap" rel="stylesheet">
+<div id="visitor-popup" style="position:fixed;bottom:-200px;left:20px;background:#1a1a1a;color:#ededed;padding:20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5);font-family:'Inter',sans-serif;z-index:9999;transition:all 0.5s cubic-bezier(0.19,1,0.22,1);max-width:350px;border:1px solid #333;transform-origin:bottom left;">
+  <div style="display:flex;flex-direction:column;align-items:center;">
+    <p style="margin:0 0 14px 0;font-size:15px;font-weight:600;text-align:center;">Hey! Who is visiting?</p>
+    <div style="display:flex;gap:6px;flex-wrap:nowrap;justify-content:center;width:100%;">
+      <button onclick="trackVisitor('Recruiter')" style="background:#212836;color:#c9ced6;border:none;padding:7px 10px;border-radius:6px;font-size:11.5px;cursor:pointer;font-weight:500;white-space:nowrap;transition:transform 0.2s,box-shadow 0.2s,background 0.2s,color 0.2s;" onmouseover="this.style.transform='scale(1.06) translateY(-2px)';this.style.boxShadow='0 8px 16px rgba(0,0,0,0.3)';this.style.background='#313a4f';this.style.color='#fff'" onmouseout="this.style.transform='none';this.style.boxShadow='none';this.style.background='#212836';this.style.color='#c9ced6'">Recruiter</button>
+      <button onclick="trackVisitor('Hiring Manager')" style="background:#212836;color:#c9ced6;border:none;padding:7px 10px;border-radius:6px;font-size:11.5px;cursor:pointer;font-weight:500;white-space:nowrap;transition:transform 0.2s,box-shadow 0.2s,background 0.2s,color 0.2s;" onmouseover="this.style.transform='scale(1.06) translateY(-2px)';this.style.boxShadow='0 8px 16px rgba(0,0,0,0.3)';this.style.background='#313a4f';this.style.color='#fff'" onmouseout="this.style.transform='none';this.style.boxShadow='none';this.style.background='#212836';this.style.color='#c9ced6'">Hiring Manager</button>
+      <button onclick="trackVisitor('Colleague')" style="background:#212836;color:#c9ced6;border:none;padding:7px 10px;border-radius:6px;font-size:11.5px;cursor:pointer;font-weight:500;white-space:nowrap;transition:transform 0.2s,box-shadow 0.2s,background 0.2s,color 0.2s;" onmouseover="this.style.transform='scale(1.06) translateY(-2px)';this.style.boxShadow='0 8px 16px rgba(0,0,0,0.3)';this.style.background='#313a4f';this.style.color='#fff'" onmouseout="this.style.transform='none';this.style.boxShadow='none';this.style.background='#212836';this.style.color='#c9ced6'">Colleague</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Cite mame tracker for C1 in google sheets
+const currentPageName = 'Knee';
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (!localStorage.getItem('visitor_type_sneh_v1')) {
+    setTimeout(() => document.getElementById('visitor-popup').style.bottom = '20px', 1000);
+  }
+});
+
+function trackVisitor(type) {
+  localStorage.setItem('visitor_type_sneh_v1', type);
+  const popup = document.getElementById('visitor-popup');
+  popup.style.bottom = '-200px';
+  popup.style.transform = 'scale(0.2)';
+  popup.style.opacity = '0';
+  
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbwlHgAmcqGqd7473Gejw0tByy2QDDdPF4MxXc8pKdfsGoS4rNlWylsLcQ54VLIBfumR/exec';
+  
+  fetch(scriptURL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+      visitorType: type,
+      pageName: currentPageName
+    })
+  }).catch(err => console.error('Tracking Error:', err));
+}
+</script>
+
+<!--Site Visit Counter-->
+
+
+
+
+  
 <div id="view"><canvas id="c"></canvas>
 <a href="https://sneh-patel-portfolio-mu.vercel.app/" style="
   position:absolute;
