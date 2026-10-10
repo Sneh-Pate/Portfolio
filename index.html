@@ -92,32 +92,31 @@ footer{padding:28px 0 40px;border-top:1px solid var(--line);color:var(--muted);f
 
 <!--Site Visit Counter-->
 
-<div id="visitor-popup" style="position:fixed;bottom:-150px;left:20px;background:#1a1a1a;color:#ededed;padding:20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5);font-family:system-ui,-apple-system,sans-serif;z-index:9999;transition:bottom 0.4s ease-in-out;max-width:320px;border:1px solid #333;">
-  <p style="margin:0 0 12px 0;font-size:14px;font-weight:600;letter-spacing:0.3px;">Hey! Who is visiting?</p>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;">
-    <button onclick="trackVisitor('Recruiter')" style="background:#2563eb;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:500;transition:background 0.2s;">Recruiter</button>
-    <button onclick="trackVisitor('Hiring Manager')" style="background:#2563eb;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:500;transition:background 0.2s;">Hiring Manager</button>
-    <button onclick="trackVisitor('A Mutual')" style="background:#2563eb;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:500;transition:background 0.2s;">A Mutual</button>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600&display=swap" rel="stylesheet">
+<div id="visitor-popup" style="position:fixed;bottom:-200px;left:20px;background:#1a1a1a;color:#ededed;padding:24px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5);font-family:'Inter',sans-serif;z-index:9999;transition:bottom 0.5s cubic-bezier(0.19,1,0.22,1);max-width:320px;border:1px solid #333;">
+  <div style="display:flex;flex-direction:column;align-items:center;">
+    <p style="margin:0 0 16px 0;font-size:15px;font-weight:600;text-align:center;">Hey! Who is visiting?</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+      <button onclick="trackVisitor('Recruiter')" style="background:#212836;color:#c9ced6;border:none;padding:8px 14px;border-radius:6px;font-size:12.5px;cursor:pointer;font-weight:500;transition:transform 0.2s,box-shadow 0.2s,background 0.2s,color 0.2s;" onmouseover="this.style.transform='scale(1.06) translateY(-2px)';this.style.boxShadow='0 8px 16px rgba(0,0,0,0.3)';this.style.background='#313a4f';this.style.color='#fff'" onmouseout="this.style.transform='none';this.style.boxShadow='none';this.style.background='#212836';this.style.color='#c9ced6'">Recruiter</button>
+      <button onclick="trackVisitor('Hiring Manager')" style="background:#212836;color:#c9ced6;border:none;padding:8px 14px;border-radius:6px;font-size:12.5px;cursor:pointer;font-weight:500;transition:transform 0.2s,box-shadow 0.2s,background 0.2s,color 0.2s;" onmouseover="this.style.transform='scale(1.06) translateY(-2px)';this.style.boxShadow='0 8px 16px rgba(0,0,0,0.3)';this.style.background='#313a4f';this.style.color='#fff'" onmouseout="this.style.transform='none';this.style.boxShadow='none';this.style.background='#212836';this.style.color='#c9ced6'">Hiring Manager</button>
+      <button onclick="trackVisitor('Colleague')" style="background:#212836;color:#c9ced6;border:none;padding:8px 14px;border-radius:6px;font-size:12.5px;cursor:pointer;font-weight:500;transition:transform 0.2s,box-shadow 0.2s,background 0.2s,color 0.2s;" onmouseover="this.style.transform='scale(1.06) translateY(-2px)';this.style.boxShadow='0 8px 16px rgba(0,0,0,0.3)';this.style.background='#313a4f';this.style.color='#fff'" onmouseout="this.style.transform='none';this.style.boxShadow='none';this.style.background='#212836';this.style.color='#c9ced6'">Colleague</button>
+    </div>
   </div>
 </div>
-
 <script>
 window.addEventListener('DOMContentLoaded', () => {
-  if (!localStorage.getItem('visitor_type')) {
-    setTimeout(() => document.getElementById('visitor-popup').style.bottom = '20px', 2000);
+  if (!localStorage.getItem('visitor_type_sneh_v1')) {
+    setTimeout(() => document.getElementById('visitor-popup').style.bottom = '20px', 2500);
   }
 });
 function trackVisitor(type) {
-  localStorage.setItem('visitor_type', type);
-  document.getElementById('visitor-popup').style.bottom = '-150px';
+  localStorage.setItem('visitor_type_sneh_v1', type);
+  document.getElementById('visitor-popup').style.bottom = '-200px';
   fetch(`https://api.countapi.xyz/hit/snehpatel-portfolio/${type.toLowerCase().replace(/\s+/g, '-')}`).catch(()=>{});
-  alert(`Thanks! Glad to have you here, ${type}.`);
 }
 </script>
 
 <!--Site Visit Counter-->
-
-
 
   
 <div class="wrap">
