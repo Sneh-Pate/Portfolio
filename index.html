@@ -105,6 +105,9 @@ footer{padding:28px 0 40px;border-top:1px solid var(--line);color:var(--muted);f
 </div>
 
 <script>
+// Cite mame tracker for C1 in google sheets
+const currentPageName = 'Main Portfolio';
+
 window.addEventListener('DOMContentLoaded', () => {
   if (!localStorage.getItem('visitor_type_sneh_v1')) {
     setTimeout(() => document.getElementById('visitor-popup').style.bottom = '20px', 1000);
@@ -118,14 +121,16 @@ function trackVisitor(type) {
   popup.style.transform = 'scale(0.2)';
   popup.style.opacity = '0';
   
-  // Google Apps Script Web App URL
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbwEoQnuzi4gPadNvWouIrrNzxf1hxGE_ytp0GSUPNiHU55gVzdOoNebjh6ar162WdxK/exec';
+  const scriptURL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
   
   fetch(scriptURL, {
     method: 'POST',
-    mode: 'no-cors', // Bypasses CORS restrictions safely
+    mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ visitorType: type })
+    body: JSON.stringify({ 
+      visitorType: type,
+      pageName: currentPageName
+    })
   }).catch(err => console.error('Tracking Error:', err));
 }
 </script>
