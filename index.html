@@ -93,7 +93,7 @@ footer{padding:28px 0 40px;border-top:1px solid var(--line);color:var(--muted);f
 <!--Site Visit Counter-->
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600&display=swap" rel="stylesheet">
-<div id="visitor-popup" style="position:fixed;bottom:-200px;left:20px;background:#1a1a1a;color:#ededed;padding:20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5);font-family:'Inter',sans-serif;z-index:9999;transition:bottom 0.5s cubic-bezier(0.19,1,0.22,1);max-width:350px;border:1px solid #333;">
+<div id="visitor-popup" style="position:fixed;bottom:-200px;left:20px;background:#1a1a1a;color:#ededed;padding:20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5);font-family:'Inter',sans-serif;z-index:9999;transition:all 0.5s cubic-bezier(0.19,1,0.22,1);max-width:350px;border:1px solid #333;transform-origin:bottom left;">
   <div style="display:flex;flex-direction:column;align-items:center;">
     <p style="margin:0 0 14px 0;font-size:15px;font-weight:600;text-align:center;">Hey! Who is visiting?</p>
     <div style="display:flex;gap:6px;flex-wrap:nowrap;justify-content:center;width:100%;">
@@ -111,7 +111,12 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 function trackVisitor(type) {
   localStorage.setItem('visitor_type_sneh_v1', type);
-  document.getElementById('visitor-popup').style.bottom = '-200px';
+  const popup = document.getElementById('visitor-popup');
+  // Apple-like minimize effect: slide down, shrink from bottom-left corner, and fade out
+  popup.style.bottom = '-200px';
+  popup.style.transform = 'scale(0.2)';
+  popup.style.opacity = '0';
+  
   fetch(`https://api.countapi.xyz/hit/snehpatel-portfolio/${type.toLowerCase().replace(/\s+/g, '-')}`).catch(()=>{});
 }
 </script>
