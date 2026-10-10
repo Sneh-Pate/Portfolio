@@ -93,13 +93,12 @@ footer{padding:28px 0 40px;border-top:1px solid var(--line);color:var(--muted);f
 <!--Site Visit Counter-->
 
 <div id="visitor-popup" style="position:fixed;bottom:-150px;left:20px;background:#1a1a1a;color:#ededed;padding:20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5);font-family:system-ui,-apple-system,sans-serif;z-index:9999;transition:bottom 0.4s ease-in-out;max-width:320px;border:1px solid #333;">
-  <p style="margin:0 0 12px 0;font-size:14px;font-weight:600;letter-spacing:0.3px;">👋 Quick question: Who is visiting?</p>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+  <p style="margin:0 0 12px 0;font-size:14px;font-weight:600;letter-spacing:0.3px;">Hey! Who is visiting?</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
     <button onclick="trackVisitor('Recruiter')" style="background:#2563eb;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:500;transition:background 0.2s;">Recruiter</button>
     <button onclick="trackVisitor('Hiring Manager')" style="background:#2563eb;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:500;transition:background 0.2s;">Hiring Manager</button>
     <button onclick="trackVisitor('A Mutual')" style="background:#2563eb;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:500;transition:background 0.2s;">A Mutual</button>
   </div>
-  <button onclick="closePopup()" style="background:transparent;border:none;color:#9ca3af;font-size:11px;cursor:pointer;padding:0;text-decoration:underline;">Maybe Later</button>
 </div>
 
 <script>
@@ -113,10 +112,6 @@ function trackVisitor(type) {
   document.getElementById('visitor-popup').style.bottom = '-150px';
   fetch(`https://api.countapi.xyz/hit/snehpatel-portfolio/${type.toLowerCase().replace(/\s+/g, '-')}`).catch(()=>{});
   alert(`Thanks! Glad to have you here, ${type}.`);
-}
-function closePopup() {
-  document.getElementById('visitor-popup').style.bottom = '-150px';
-  localStorage.setItem('visitor_type', 'dismissed');
 }
 </script>
 
