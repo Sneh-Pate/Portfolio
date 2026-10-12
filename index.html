@@ -139,7 +139,7 @@ function trackVisitor(type) {
 
   
 <div class="wrap">
-<header class="top"><b>Sneh Patel</b><nav><a href="#experience">Experience</a><a href="#builds">Projects</a><a href="#certs">Certifications</a><div class="dd"><span class="dd-btn" tabindex="0">Simulations &#9662;</span><div class="dd-menu"><a href="kardex-simulation.html" target="_blank" rel="noopener">Kardex VLM</a><a href="rover-simulation.html" target="_blank" rel="noopener">Autonomous Space Rover</a><a href="knee-simulation.html" target="_blank" rel="noopener">Adaptive Knee Brace</a></div></div></nav></header>
+<header class="top"><b>Sneh Patel</b><nav><a href="#experience">Experience</a><a href="#builds">Projects</a><a href="#cad">CAD Designs</a><a href="#certs">Certifications</a><div class="dd"><span class="dd-btn" tabindex="0">Simulations &#9662;</span><div class="dd-menu"><a href="kardex-simulation.html" target="_blank" rel="noopener">Kardex VLM</a><a href="rover-simulation.html" target="_blank" rel="noopener">Autonomous Space Rover</a><a href="knee-simulation.html" target="_blank" rel="noopener">Adaptive Knee Brace</a></div></div></nav></header>
 
 <main>
 <div class="hero">
@@ -199,6 +199,107 @@ function trackVisitor(type) {
   </div>
 </section>
 
+<!-- BEGIN INSERTED TRIAL LINKS CAROUSEL: trial_links_fixed.html -->
+<style>
+
+/* BEGIN INSERTED TRIAL LINKS CAROUSEL STYLES */
+#trial-links-carousel { overflow:hidden; width:100%; position:relative; display:flex; padding:2rem 0; }
+#trial-links-carousel::before,#trial-links-carousel::after { content:''; position:absolute; top:0; width:100px; height:100%; z-index:2; pointer-events:none; }
+#trial-links-carousel::before { left:0; background:linear-gradient(90deg,var(--bg),transparent); }
+#trial-links-carousel::after { right:0; background:linear-gradient(-90deg,var(--bg),transparent); }
+#trial-links-carousel .trial-links-track { display:flex; gap:1.5rem; width:max-content; animation:trialLinksScroll 45s linear infinite; }
+#trial-links-carousel:hover .trial-links-track { animation-play-state:paused; }
+#trial-links-carousel .trial-links-card { position:relative; width:280px; height:180px; background:var(--surface); border:1px solid var(--line); border-radius:12px; overflow:hidden; text-decoration:none; transition:transform .3s cubic-bezier(.4,0,.2,1),box-shadow .3s cubic-bezier(.4,0,.2,1),border-color .3s; box-shadow:0 4px 12px rgba(0,0,0,.3); display:block; flex-shrink:0; }
+#trial-links-carousel .trial-links-card img { width:100%; height:100%; object-fit:contain; background:#d8dadc; padding:6px; box-sizing:border-box; transition:transform .3s; }
+#trial-links-carousel .trial-links-card:hover { transform:translateY(-8px) scale(1.03); border-color:#58a6ff; box-shadow:0 12px 28px rgba(88,166,255,.25); }
+#trial-links-carousel .trial-links-card:hover img { transform:scale(1.05); }
+#trial-links-carousel .trial-links-badge { position:absolute; bottom:10px; left:10px; right:10px; background:rgba(13,17,23,.88); backdrop-filter:blur(4px); padding:6px 10px; font-size:12px; font-weight:500; color:#c9d1d9; border-radius:6px; border:1px solid #30363d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+@keyframes trialLinksScroll { 0%{transform:translateX(0)} 100%{transform:translateX(calc(-50% - 0.75rem))} }
+/* END INSERTED TRIAL LINKS CAROUSEL STYLES */
+
+</style>
+<h2 id="cad" style="scroll-margin-top:24px">CAD Designs & Mechanical Assemblies</h2>
+
+<div id="trial-links-carousel">
+  <div class="trial-links-track">
+    <!-- ITEM 1: Clamp -->
+    <a href="https://cad.onshape.com/documents/b002f44330ab0b25cff71757/w/f1886f61dd165c6517a17ee5/e/7ecacb179fb7ff5147ac1707" target="_blank" rel="noopener noreferrer" class="trial-links-card">
+      <img src="CADphotos/Clamp.PNG" alt="Clamp Assembly">
+      <div class="trial-links-badge">Clamp Assembly ↗</div>
+    </a>
+    <!-- ITEM 2: Core -->
+    <a href="https://cad.onshape.com/documents/557cadeef4930fc3657d4aa7/w/6d624cbff706d22bf2ea13f1/e/28147d95cbcfa21aeb23c0c5" target="_blank" rel="noopener noreferrer" class="trial-links-card">
+      <img src="CADphotos/Core.png" alt="Core Mechanism">
+      <div class="trial-links-badge">Core Mechanism ↗</div>
+    </a>
+    <!-- ITEM 3: RejectChute -->
+    <a href="https://cad.onshape.com/documents/b002f44330ab0b25cff71757/w/f1886f61dd165c6517a17ee5/e/cf4877233c08a22f081402d9" target="_blank" rel="noopener noreferrer" class="trial-links-card">
+      <img src="CADphotos/RejectChute.png" alt="Reject Chute">
+      <div class="trial-links-badge">Reject Chute ↗</div>
+    </a>
+    <!-- ITEM 4: C-Arm -->
+    <a href="https://cad.onshape.com/documents/e8120640d5c27823498912a6/w/d2321d32d1c67f244f7733b0/e/d3783052b976a568ddc29400" target="_blank" rel="noopener noreferrer" class="trial-links-card">
+      <img src="CADphotos/C-Arm.png" alt="C-Arm Mechanism">
+      <div class="trial-links-badge">C-Arm Assembly ↗</div>
+    </a>
+    <!-- ITEM 5: Scissors -->
+    <a href="https://cad.onshape.com/documents/a2b8b63e27a32d8c01af42d2/w/8e7c8e74f7ae65e2b15f65e9/e/4ff16072b7fa5c7d6495268b" target="_blank" rel="noopener noreferrer" class="trial-links-card">
+      <img src="CADphotos/Scissors.png" alt="Scissors Mechanism">
+      <div class="trial-links-badge">Scissors Mechanism ↗</div>
+    </a>
+    <!-- ITEM 6: Discharge -->
+    <a href="https://cad.onshape.com/documents/242ab6a2d9270607cf6ea635/w/d5ef3bf24604cd0fcc89c762/e/9745d91f4cf3e35169e35541" target="_blank" rel="noopener noreferrer" class="trial-links-card">
+      <img src="CADphotos/Discharge.PNG" alt="Discharge Valve">
+      <div class="trial-links-badge">Discharge Valve ↗</div>
+    </a>
+    <!-- ITEM 7: SApusher -->
+    <a href="https://cad.onshape.com/documents/4cdeed2ab74603f05ee18ff9/w/b52479585e481bae6a18b0ce/e/93d2e2bb98b5c2515da8218c" target="_blank" rel="noopener noreferrer" class="trial-links-card">
+      <img src="CADphotos/SApusher.png" alt="SA Pusher">
+      <div class="trial-links-badge">SA Pusher ↗</div>
+    </a>
+    <!-- ITEM 8: TreatDispenser -->
+    <a href="https://cad.onshape.com/documents/9028d2e7974a31d5342a9f5a/w/7af094df91f745b5f3cc81d9/e/65634d082212730425c9ea98" target="_blank" rel="noopener noreferrer" class="trial-links-card">
+      <img src="CADphotos/TreatDispenser.png" alt="Treat Dispenser">
+      <div class="trial-links-badge">Treat Dispenser ↗</div>
+    </a>
+
+    <!-- INFINITE LOOPING: duplicate the same eight cards with their matching links -->
+    <a href="https://cad.onshape.com/documents/b002f44330ab0b25cff71757/w/f1886f61dd165c6517a17ee5/e/7ecacb179fb7ff5147ac1707" target="_blank" rel="noopener noreferrer" class="trial-links-card">
+      <img src="CADphotos/Clamp.PNG" alt="Clamp Assembly">
+      <div class="trial-links-badge">Clamp Assembly ↗</div>
+    </a>
+    <a href="https://cad.onshape.com/documents/557cadeef4930fc3657d4aa7/w/6d624cbff706d22bf2ea13f1/e/28147d95cbcfa21aeb23c0c5" target="_blank" rel="noopener noreferrer" class="trial-links-card">
+      <img src="CADphotos/Core.png" alt="Core Mechanism">
+      <div class="trial-links-badge">Core Mechanism ↗</div>
+    </a>
+    <a href="https://cad.onshape.com/documents/b002f44330ab0b25cff71757/w/f1886f61dd165c6517a17ee5/e/cf4877233c08a22f081402d9" target="_blank" rel="noopener noreferrer" class="trial-links-card">
+      <img src="CADphotos/RejectChute.png" alt="Reject Chute">
+      <div class="trial-links-badge">Reject Chute ↗</div>
+    </a>
+    <a href="https://cad.onshape.com/documents/e8120640d5c27823498912a6/w/d2321d32d1c67f244f7733b0/e/d3783052b976a568ddc29400" target="_blank" rel="noopener noreferrer" class="trial-links-card">
+      <img src="CADphotos/C-Arm.png" alt="C-Arm Mechanism">
+      <div class="trial-links-badge">C-Arm Assembly ↗</div>
+    </a>
+    <a href="https://cad.onshape.com/documents/a2b8b63e27a32d8c01af42d2/w/8e7c8e74f7ae65e2b15f65e9/e/4ff16072b7fa5c7d6495268b" target="_blank" rel="noopener noreferrer" class="trial-links-card">
+      <img src="CADphotos/Scissors.png" alt="Scissors Mechanism">
+      <div class="trial-links-badge">Scissors Mechanism ↗</div>
+    </a>
+    <a href="https://cad.onshape.com/documents/242ab6a2d9270607cf6ea635/w/d5ef3bf24604cd0fcc89c762/e/9745d91f4cf3e35169e35541" target="_blank" rel="noopener noreferrer" class="trial-links-card">
+      <img src="CADphotos/Discharge.PNG" alt="Discharge Valve">
+      <div class="trial-links-badge">Discharge Valve ↗</div>
+    </a>
+    <a href="https://cad.onshape.com/documents/4cdeed2ab74603f05ee18ff9/w/b52479585e481bae6a18b0ce/e/93d2e2bb98b5c2515da8218c" target="_blank" rel="noopener noreferrer" class="trial-links-card">
+      <img src="CADphotos/SApusher.png" alt="SA Pusher">
+      <div class="trial-links-badge">SA Pusher ↗</div>
+    </a>
+    <a href="https://cad.onshape.com/documents/9028d2e7974a31d5342a9f5a/w/7af094df91f745b5f3cc81d9/e/65634d082212730425c9ea98" target="_blank" rel="noopener noreferrer" class="trial-links-card">
+      <img src="CADphotos/TreatDispenser.png" alt="Treat Dispenser">
+      <div class="trial-links-badge">Treat Dispenser ↗</div>
+    </a>
+  </div>
+</div>
+<!-- END INSERTED TRIAL LINKS CAROUSEL: trial_links_fixed.html -->
+
 <section id="projects">
   <h2>Septodont projects</h2>
   <p class="sub">
@@ -249,6 +350,7 @@ function trackVisitor(type) {
     <a class="cert" href="certificates/solidworks-cad-design-associate.pdf" target="_blank" rel="noopener" aria-label="View SOLIDWORKS CAD Design Associate certificate (PDF)"><h3>SolidWorks CAD Design</h3><p>Dassault Systèmes</p><p>October 27, 2023</p><p class="id">Certificate C-Q8VNRGZSA5</p><span class="view">View certificate &rarr;</span></a>
   </div>
 </section>
+
 </main>
 
 <footer>Thank you for taking the time to learn about me</footer>
